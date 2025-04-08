@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.lifecycleScope
+import com.example.lumos.entities.Type
 import com.example.lumos.ui.theme.LumosTheme
 import kotlinx.coroutines.launch
 
@@ -37,6 +38,48 @@ class MainActivity : ComponentActivity() {
                 Log.d(TAG, "Received artists: $artists")
             } catch (e: Exception) {
                 Log.e(TAG, "Error fetching artists", e)
+            }
+
+            try {
+                val types = ApiClient.getTypeService().getTypes()
+                Log.d(TAG, "Received types: $types")
+            } catch (e: Exception) {
+                Log.e(TAG, "Error fetching types", e)
+            }
+
+            try {
+                val showRates = ApiClient.getShowRateService().getShowRates()
+                Log.d(TAG, "Received showRates: $showRates")
+            } catch (e: Exception) {
+                Log.e(TAG, "Error fetching showRates", e)
+            }
+
+            try {
+                val performances = ApiClient.getPerformanceService().getPerformances()
+                Log.d(TAG, "Received performances: $performances")
+            } catch (e: Exception) {
+                Log.e(TAG, "Error fetching performances", e)
+            }
+
+            try {
+                val artistPerformances = ApiClient.getArtistPerformanceService().getArtistPerformances()
+                Log.d(TAG, "Received artistPerformances: $artistPerformances")
+            } catch (e: Exception) {
+                Log.e(TAG, "Error fetching artistPerformances", e)
+            }
+
+            try {
+                val orders = ApiClient.getOrderService().getOrders()
+                Log.d(TAG, "Received orders: $orders")
+            } catch (e: Exception) {
+                Log.e(TAG, "Error fetching orders", e)
+            }
+
+            try {
+                val earnings = ApiClient.getEarningService().getEarnings()
+                Log.d(TAG, "Received earnings: $earnings")
+            } catch (e: Exception) {
+                Log.e(TAG, "Error fetching earnings", e)
             }
         }
     }

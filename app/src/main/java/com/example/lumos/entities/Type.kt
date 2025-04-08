@@ -1,10 +1,8 @@
-//package com.example.lumos.entities
-//import androidx.room.Entity
-//import androidx.room.PrimaryKey
-//
-//@Entity(tableName = "type")
-//data class Type(
-//    @PrimaryKey(autoGenerate = true)
-//    val id: Int,
-//    val showType: String
-//)
+package com.example.lumos.entities
+
+import com.google.gson.annotations.SerializedName
+
+data class Type(
+    val id: Int = 0,
+    @SerializedName("show_type") val showType: String
+)

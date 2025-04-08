@@ -1,14 +1,10 @@
 package com.example.lumos.entities
+import com.google.gson.annotations.SerializedName
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-
-//@Entity(tableName = "artist")
 data class Artist(
-    //@PrimaryKey(autoGenerate = true)
-    val id: Int,
-    val firstName: String,
-    val lastName: String,
+    val id: Int = 0,
+    @SerializedName("first_name") val firstName: String,
+    @SerializedName("last_name") val lastName: String,
     val phone: String,
     val balance: Double
 )

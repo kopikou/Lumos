@@ -1,4 +1,4 @@
-package com.example.lumos.entities
+package com.example.lumos.domain.entities
 
 data class ArtistPerformance(
     val artist: Artist,

@@ -1,6 +1,6 @@
-package com.example.lumos.services
+package com.example.lumos.domain.services
 
-import com.example.lumos.entities.ArtistPerformance
+import com.example.lumos.domain.entities.ArtistPerformance
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET

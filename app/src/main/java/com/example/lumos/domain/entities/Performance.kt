@@ -1,4 +1,4 @@
-package com.example.lumos.entities
+package com.example.lumos.domain.entities
 
 import com.google.gson.annotations.SerializedName
 

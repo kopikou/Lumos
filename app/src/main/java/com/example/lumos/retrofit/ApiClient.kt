@@ -1,12 +1,12 @@
-package com.example.lumos
+package com.example.lumos.retrofit
 
-import com.example.lumos.services.ArtistPerformanceService
-import com.example.lumos.services.ArtistService
-import com.example.lumos.services.EarningService
-import com.example.lumos.services.OrderService
-import com.example.lumos.services.PerformanceService
-import com.example.lumos.services.ShowRateService
-import com.example.lumos.services.TypeService
+import com.example.lumos.domain.services.ArtistPerformanceService
+import com.example.lumos.domain.services.ArtistService
+import com.example.lumos.domain.services.EarningService
+import com.example.lumos.domain.services.OrderService
+import com.example.lumos.domain.services.PerformanceService
+import com.example.lumos.domain.services.ShowRateService
+import com.example.lumos.domain.services.TypeService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 

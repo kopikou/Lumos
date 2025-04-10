@@ -14,7 +14,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.lifecycleScope
-import com.example.lumos.entities.Type
+import com.example.lumos.domain.entities.Artist
+import com.example.lumos.retrofit.ApiClient
+import com.example.lumos.retrofit.services.ArtistServiceImpl
 import com.example.lumos.ui.theme.LumosTheme
 import kotlinx.coroutines.launch
 
@@ -33,12 +35,7 @@ class MainActivity : ComponentActivity() {
             }
         }
         lifecycleScope.launch {
-            try {
-                val artists = ApiClient.getArtistService().getArtists()
-                Log.d(TAG, "Received artists: $artists")
-            } catch (e: Exception) {
-                Log.e(TAG, "Error fetching artists", e)
-            }
+            //val art = ArtistServiceImpl().createArtist(Artist(0,"Виктория","Радченко","0000",0.00))
 
             try {
                 val types = ApiClient.getTypeService().getTypes()

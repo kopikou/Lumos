@@ -1,6 +1,7 @@
 package com.example.lumos.domain.services
 
 import com.example.lumos.domain.entities.Order
+import com.example.lumos.domain.entities.OrderCreateUpdateSerializer
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -16,10 +17,10 @@ interface OrderService {
     suspend fun getOrderById(@Path("id") id: Int): Order
 
     @POST("api/orders/")
-    suspend fun createOrder(@Body order: Order): Order
+    suspend fun createOrder(@Body order: OrderCreateUpdateSerializer): OrderCreateUpdateSerializer
 
     @PUT("api/orders/{id}/")
-    suspend fun updateOrder(@Path("id") id: Int, @Body order: Order): Order
+    suspend fun updateOrder(@Path("id") id: Int, @Body order: OrderCreateUpdateSerializer): OrderCreateUpdateSerializer
 
     @DELETE("api/orders/{id}/")
     suspend fun deleteOrder(@Path("id") id: Int): Unit

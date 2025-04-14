@@ -1,6 +1,7 @@
 package com.example.lumos.domain.services
 
 import com.example.lumos.domain.entities.ArtistPerformance
+import com.example.lumos.domain.entities.ArtistPerformanceCreateUpdateSerializer
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -16,10 +17,10 @@ interface ArtistPerformanceService {
     suspend fun getArtistPerformanceById(@Path("id") id: Int): ArtistPerformance
 
     @POST("api/artistperformances/")
-    suspend fun createArtistPerformance(@Body artistPerformance: ArtistPerformance): ArtistPerformance
+    suspend fun createArtistPerformance(@Body artistPerformance: ArtistPerformanceCreateUpdateSerializer): ArtistPerformanceCreateUpdateSerializer
 
     @PUT("api/artistperformances/{id}/")
-    suspend fun updateArtistPerformance(@Path("id") id: Int, @Body artistPerformance: ArtistPerformance): ArtistPerformance
+    suspend fun updateArtistPerformance(@Path("id") id: Int, @Body artistPerformance: ArtistPerformanceCreateUpdateSerializer): ArtistPerformanceCreateUpdateSerializer
 
     @DELETE("api/artistperformances/{id}/")
     suspend fun deleteArtistPerformance(@Path("id") id: Int): Unit

@@ -1,6 +1,7 @@
 package com.example.lumos.domain.services
 
 import com.example.lumos.domain.entities.Earning
+import com.example.lumos.domain.entities.EarningCreateUpdateSerializer
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -16,10 +17,10 @@ interface EarningService {
     suspend fun getEarningById(@Path("id") id: Int): Earning
 
     @POST("api/earnings/")
-    suspend fun createEarning(@Body earning: Earning): Earning
+    suspend fun createEarning(@Body earning: EarningCreateUpdateSerializer): EarningCreateUpdateSerializer
 
     @PUT("api/earnings/{id}/")
-    suspend fun updateEarning(@Path("id") id: Int, @Body earning: Earning): Earning
+    suspend fun updateEarning(@Path("id") id: Int, @Body earning: EarningCreateUpdateSerializer): EarningCreateUpdateSerializer
 
     @DELETE("api/earnings/{id}/")
     suspend fun deleteEarning(@Path("id") id: Int): Unit

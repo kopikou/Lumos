@@ -60,6 +60,8 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.fragment.ktx)
+    implementation(libs.material)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -80,6 +82,6 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")       // Последняя версия на момент написания ответа
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
 
-    
+    implementation ("androidx.appcompat:appcompat:1.6.1")
 }
 

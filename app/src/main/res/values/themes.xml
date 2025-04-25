@@ -1,5 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.Lumos" parent="Theme.AppCompat.Light.NoActionBar"/>
+    <style name="Theme.Lumos" parent="Theme.MaterialComponents.DayNight"/>
+    <style name="Widget.MaterialComponents.Button" parent="Widget.MaterialComponents.Button.UnelevatedButton">
+        <item name="android:layout_height">48dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="backgroundTint">@color/red</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+
+    <!-- Базовый стиль для TextInputLayout -->
+    <style name="Widget.MyApp.TextInputLayout.OutlinedBox" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <!-- Цвет контура в неактивном состоянии -->
+        <item name="boxStrokeColor">@color/text_input_box_stroke</item>
+
+        <!-- Цвет контура при фокусе -->
+        <item name="hintTextColor">@color/text_input_hint</item>
+        <item name="boxStrokeWidth">1dp</item>
+        <item name="boxStrokeWidthFocused">2dp</item>
+
+        <!-- Скругление углов -->
+        <item name="boxCornerRadiusTopStart">8dp</item>
+        <item name="boxCornerRadiusTopEnd">8dp</item>
+        <item name="boxCornerRadiusBottomStart">8dp</item>
+        <item name="boxCornerRadiusBottomEnd">8dp</item>
+
+        <item name="hintTextAppearance">@style/TextAppearance.MyApp.Hint</item>
+    </style>
+
+    <!-- Стиль для текста подсказки -->
+    <style name="TextAppearance.MyApp.Hint" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">?attr/colorPrimary</item>
+    </style>
+
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">
+        <!-- Основные цвета -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+
+        <!-- Настройки для TextInputLayout -->
+        <item name="textInputStyle">@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox</item>
+
+        <!-- Настройки кнопок -->
+        <item name="materialButtonStyle">@style/Widget.MaterialComponents.Button</item>
+        <item name="buttonStyle">@style/Widget.MaterialComponents.Button</item>
+    </style>
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
 </resources>

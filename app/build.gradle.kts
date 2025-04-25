@@ -71,17 +71,22 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     // Зависимости Room
-    implementation("androidx.room:room-runtime:2.5.0") // Последняя версия на момент написания ответа
-    kapt("androidx.room:room-compiler:2.5.0")         // Версия должна совпадать с room-runtime
+    implementation("androidx.room:room-runtime:2.5.0")
+    kapt("androidx.room:room-compiler:2.5.0")
 
     // Зависимости Retrofit
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")           // Последняя версия на момент написания ответа
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")     // Версия должна совпадать с версией retrofit
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation ("com.squareup.okhttp3:logging-interceptor:4.9.1")
 
     // Зависимости Coroutines
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")       // Последняя версия на момент написания ответа
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
 
     implementation ("androidx.appcompat:appcompat:1.6.1")
+
+    implementation ("com.google.android.material:material:1.6.0")
+
+
 }
 

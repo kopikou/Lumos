@@ -1,5 +1,6 @@
-package com.example.lumos.retrofit
+package com.example.lumos.retrofit.authentification
 
+import com.example.lumos.retrofit.ApiClient
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking

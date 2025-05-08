@@ -5,8 +5,10 @@
     <string name="profile">Личный кабинет</string>
 
     <string name="app_logo_content_desc">Логотип приложения</string>
-    <string name="username_hint">Имя пользователя или email</string>
+    <string name="username_hint">Имя пользователя</string>
     <string name="password_hint">Пароль</string>
     <string name="login_button">Войти</string>
-    <string name="register_prompt">Нет аккаунта? Зарегистрироваться</string>
+
+    <string name="artist_profile_title">Профиль артиста</string>
+    <string name="edit_profile">Редактировать профиль</string>
 </resources>

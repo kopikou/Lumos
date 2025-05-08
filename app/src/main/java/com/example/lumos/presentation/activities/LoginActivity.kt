@@ -1,16 +1,15 @@
-package com.example.lumos
+package com.example.lumos.presentation.activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.example.lumos.R
 
-import com.example.lumos.retrofit.AuthRepository
-import com.example.lumos.retrofit.TokenManager
+import com.example.lumos.retrofit.authentification.AuthRepository
+import com.example.lumos.retrofit.authentification.TokenManager
 import com.google.android.material.button.MaterialButton
-import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.launch
 
@@ -47,6 +46,8 @@ class LoginActivity : AppCompatActivity() {
                 val tokens = authRepository.login(username, password)
                 if (tokens != null) {
                     tokenManager.saveTokens(tokens.access, tokens.refresh)
+                    tokenManager.saveAdminStatus(tokens.user.isAdmin)
+                    tokenManager.saveUserNames(tokens.user.firstName, tokens.user.lastName)
                     startActivity(Intent(this@LoginActivity, MainActivity::class.java))
                     finish()
                 } else {

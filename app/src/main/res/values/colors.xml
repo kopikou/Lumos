@@ -17,4 +17,5 @@
     <color name="white">#FFFFFFFF</color>
     <color name="orange_200">#FFFFAB40</color>
     <color name="red">#F44336</color>
+    <color name="primaryColor">#6200EE</color>
 </resources>

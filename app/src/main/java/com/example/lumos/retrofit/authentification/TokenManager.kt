@@ -1,4 +1,4 @@
-package com.example.lumos.retrofit
+package com.example.lumos.retrofit.authentification
 
 import android.content.Context
 //Хранение токенов
@@ -38,5 +38,29 @@ class TokenManager(context: Context) {
 
     fun clearTokens() {
         sharedPreferences.edit().clear().apply()
+    }
+
+    fun saveAdminStatus(isAdmin: Boolean) {
+        sharedPreferences.edit().putBoolean("is_admin", isAdmin).apply()
+    }
+
+    fun isAdmin(): Boolean {
+        return sharedPreferences.getBoolean("is_admin", false)
+    }
+
+    fun saveUserNames(firstName: String?, lastName: String?) {
+        sharedPreferences.edit().apply {
+            putString("first_name", firstName)
+            putString("last_name", lastName)
+            apply()
+        }
+    }
+
+    fun getFirstName(): String {
+        return sharedPreferences.getString("first_name", null).toString()
+    }
+
+    fun getLastName(): String {
+        return sharedPreferences.getString("last_name", null).toString()
     }
 }

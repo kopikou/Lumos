@@ -1,4 +1,4 @@
-package com.example.lumos.retrofit
+package com.example.lumos.retrofit.authentification
 
 import okhttp3.Interceptor
 import okhttp3.Response

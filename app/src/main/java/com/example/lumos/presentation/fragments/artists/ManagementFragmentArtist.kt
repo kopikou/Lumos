@@ -1,4 +1,4 @@
-package com.example.lumos.presentation
+package com.example.lumos.presentation.fragments.artists
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.lumos.R
 
-class ProfileFragment : Fragment() {
+class ManagementFragmentArtist : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -14,6 +14,6 @@ class ProfileFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile, container, false)
+        return inflater.inflate(R.layout.fragment_management_artists, container, false)
     }
 }

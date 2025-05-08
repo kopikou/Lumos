@@ -1,16 +1,25 @@
-package com.example.lumos
+package com.example.lumos.presentation.activities
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import com.example.lumos.presentation.ManagementFragment
-import com.example.lumos.presentation.ProfileFragment
-import com.example.lumos.presentation.ScheduleFragment
-import com.example.lumos.retrofit.TokenManager
+import androidx.lifecycle.lifecycleScope
+import com.example.lumos.R
+import com.example.lumos.domain.entities.Artist
+import com.example.lumos.presentation.fragments.artists.ManagementFragmentArtist
+import com.example.lumos.presentation.fragments.artists.ProfileFragmentArtist
+import com.example.lumos.presentation.fragments.artists.ScheduleFragmentArtist
+import com.example.lumos.presentation.fragments.managers.ManagementFragmentManager
+import com.example.lumos.presentation.fragments.managers.ProfileFragmentManager
+import com.example.lumos.presentation.fragments.managers.ScheduleFragmentManager
+import com.example.lumos.presentation.viewModels.MainViewModel
+import com.example.lumos.retrofit.authentification.TokenManager
+import com.example.lumos.retrofit.services.ArtistServiceImpl
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.bottomnavigation.LabelVisibilityMode
 import com.google.android.material.navigation.NavigationBarView
+import kotlinx.coroutines.launch
 
 //class MainActivity : AppCompatActivity() {
 //
@@ -49,11 +58,14 @@ import com.google.android.material.navigation.NavigationBarView
 
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var tokenManager: TokenManager
+    private val viewModel: MainViewModel by viewModels() // Add ViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        tokenManager = TokenManager(this)
 
-        // Проверяем авторизацию перед отображением MainActivity
-        val tokenManager = TokenManager(this)
+        // Проверка авторизации
         if (tokenManager.getAccessToken() == null) {
             startActivity(Intent(this, LoginActivity::class.java))
             finish()
@@ -64,36 +76,57 @@ class MainActivity : AppCompatActivity() {
 
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_navigation)
         bottomNav.labelVisibilityMode = NavigationBarView.LABEL_VISIBILITY_LABELED
-        bottomNav.isItemHorizontalTranslationEnabled = false//itemHorizontalTranslationEnabled = false
-        bottomNav.setOnNavigationItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.nav_schedule -> {
-                    supportFragmentManager.beginTransaction()
-                        .replace(R.id.fragment_container, ScheduleFragment())
-                        .commit()
-                    true
+        bottomNav.isItemHorizontalTranslationEnabled = false
+
+        // Observe the artist data
+        viewModel.artist.observe(this) { artist ->
+            bottomNav.setOnNavigationItemSelectedListener { item ->
+                when (item.itemId) {
+                    R.id.nav_schedule -> {
+                        replaceFragmentForCurrentUser(ScheduleFragmentManager(), ScheduleFragmentArtist())
+                        true
+                    }
+                    R.id.nav_control -> {
+                        replaceFragmentForCurrentUser(ManagementFragmentManager(), ManagementFragmentArtist())
+                        true
+                    }
+                    R.id.nav_profile -> {
+                        // Use the artist from ViewModel
+                        replaceFragmentForCurrentUser(ProfileFragmentManager(), ProfileFragmentArtist(artist))
+                        true
+                    }
+                    else -> false
                 }
-                R.id.nav_control -> {
-                    supportFragmentManager.beginTransaction()
-                        .replace(R.id.fragment_container, ManagementFragment())
-                        .commit()
-                    true
-                }
-                R.id.nav_profile -> {
-                    supportFragmentManager.beginTransaction()
-                        .replace(R.id.fragment_container, ProfileFragment())
-                        .commit()
-                    true
-                }
-                else -> false
+            }
+
+            // Установка начального фрагмента
+            if (savedInstanceState == null) {
+                bottomNav.selectedItemId = R.id.nav_schedule
             }
         }
 
-        // Установка фрагмента по умолчанию
-        if (savedInstanceState == null) {
-            bottomNav.selectedItemId = R.id.nav_schedule
+        // Load artist data
+        lifecycleScope.launch {
+            viewModel.loadArtist(tokenManager.getFirstName(), tokenManager.getLastName())
         }
     }
+
+    private fun replaceFragmentForCurrentUser(
+        adminFragment: Fragment,
+        userFragment: Fragment
+    ) {
+        val fragment = if (tokenManager.isAdmin()) {
+            adminFragment
+        } else {
+            userFragment
+        }
+
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment)
+            .commit()
+    }
+
+    // Remove the userInfo() function as it's now handled by ViewModel
 }
 
 

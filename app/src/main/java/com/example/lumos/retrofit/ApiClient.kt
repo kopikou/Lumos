@@ -9,6 +9,7 @@ import com.example.lumos.domain.services.OrderService
 import com.example.lumos.domain.services.PerformanceService
 import com.example.lumos.domain.services.ShowRateService
 import com.example.lumos.domain.services.TypeService
+import com.example.lumos.domain.services.UserService
 import com.example.lumos.retrofit.authentification.AuthInterceptor
 import com.example.lumos.retrofit.authentification.TokenAuthenticator
 import com.example.lumos.retrofit.authentification.TokenManager
@@ -68,4 +69,5 @@ object ApiClient {
     fun getEarningService(): EarningService = retrofit.create(EarningService::class.java)
 
     fun getAuthService(): AuthService = retrofit.create(AuthService::class.java)
+    fun getUserService(): UserService = retrofit.create(UserService::class.java)
 }

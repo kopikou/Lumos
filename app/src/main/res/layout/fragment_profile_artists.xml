@@ -119,5 +119,17 @@
             app:iconTint="@color/primaryColor"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnLogout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/logout"
+            app:icon="@drawable/ic_logout"
+            app:iconGravity="textStart"
+            app:iconPadding="8dp"
+            app:iconTint="@color/red"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+
     </LinearLayout>
 </ScrollView>

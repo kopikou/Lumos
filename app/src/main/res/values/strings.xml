@@ -2,6 +2,7 @@
     <string name="app_name">Lumos</string>
     <string name="schedule">График</string>
     <string name="control">Управление</string>
+    <string name="history">История заказов</string>
     <string name="profile">Личный кабинет</string>
 
     <string name="app_logo_content_desc">Логотип приложения</string>
@@ -11,4 +12,8 @@
 
     <string name="artist_profile_title">Профиль артиста</string>
     <string name="edit_profile">Редактировать профиль</string>
+    <string name="logout">Выход</string>
+    <string name="name">Имя</string>
+    <string name="lastname">Фамилия</string>
+    <string name="phone">Телефон</string>
 </resources>

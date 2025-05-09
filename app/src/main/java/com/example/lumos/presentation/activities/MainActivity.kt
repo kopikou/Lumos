@@ -59,7 +59,8 @@ import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     private lateinit var tokenManager: TokenManager
-    private val viewModel: MainViewModel by viewModels() // Add ViewModel
+    private val viewModel: MainViewModel by viewModels()
+    private lateinit var bottomNav: BottomNavigationView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,41 +74,57 @@ class MainActivity : AppCompatActivity() {
         }
 
         setContentView(R.layout.activity_main)
-
-        val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_navigation)
-        bottomNav.labelVisibilityMode = NavigationBarView.LABEL_VISIBILITY_LABELED
-        bottomNav.isItemHorizontalTranslationEnabled = false
+        bottomNav = findViewById(R.id.bottom_navigation)
+        setupBottomNavigation()
 
         // Observe the artist data
         viewModel.artist.observe(this) { artist ->
-            bottomNav.setOnNavigationItemSelectedListener { item ->
-                when (item.itemId) {
-                    R.id.nav_schedule -> {
-                        replaceFragmentForCurrentUser(ScheduleFragmentManager(), ScheduleFragmentArtist())
-                        true
-                    }
-                    R.id.nav_control -> {
-                        replaceFragmentForCurrentUser(ManagementFragmentManager(), ManagementFragmentArtist())
-                        true
-                    }
-                    R.id.nav_profile -> {
-                        // Use the artist from ViewModel
-                        replaceFragmentForCurrentUser(ProfileFragmentManager(), ProfileFragmentArtist(artist))
-                        true
-                    }
-                    else -> false
-                }
-            }
-
             // Установка начального фрагмента
             if (savedInstanceState == null) {
                 bottomNav.selectedItemId = R.id.nav_schedule
             }
         }
 
-        // Load artist data
         lifecycleScope.launch {
             viewModel.loadArtist(tokenManager.getFirstName(), tokenManager.getLastName())
+        }
+    }
+
+    private fun setupBottomNavigation() {
+        // Устанавливаем соответствующее меню в зависимости от роли
+        bottomNav.menu.clear()
+        bottomNav.inflateMenu(
+            if (tokenManager.isAdmin()) R.menu.bottom_nav_menu_manager
+            else R.menu.bottom_nav_menu_artist
+        )
+
+        bottomNav.labelVisibilityMode = NavigationBarView.LABEL_VISIBILITY_LABELED
+        bottomNav.isItemHorizontalTranslationEnabled = false
+
+        bottomNav.setOnNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_schedule -> {
+                    replaceFragmentForCurrentUser(ScheduleFragmentManager(), ScheduleFragmentArtist())
+                    true
+                }
+                R.id.nav_control -> {
+                    // Только для админов
+                    replaceFragment(ManagementFragmentManager())
+                    true
+                }
+                R.id.nav_history -> {
+                    // Только для обычных пользователей
+                    replaceFragment(ManagementFragmentArtist())
+                    true
+                }
+                R.id.nav_profile -> {
+                    viewModel.artist.value?.let { artist ->
+                        replaceFragmentForCurrentUser(ProfileFragmentManager(), ProfileFragmentArtist(artist))
+                    }
+                    true
+                }
+                else -> false
+            }
         }
     }
 
@@ -121,12 +138,14 @@ class MainActivity : AppCompatActivity() {
             userFragment
         }
 
+        replaceFragment(fragment)
+    }
+
+    private fun replaceFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)
             .commit()
     }
-
-    // Remove the userInfo() function as it's now handled by ViewModel
 }
 
 

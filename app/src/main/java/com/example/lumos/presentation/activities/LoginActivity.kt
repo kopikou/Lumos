@@ -48,6 +48,7 @@ class LoginActivity : AppCompatActivity() {
                     tokenManager.saveTokens(tokens.access, tokens.refresh)
                     tokenManager.saveAdminStatus(tokens.user.isAdmin)
                     tokenManager.saveUserNames(tokens.user.firstName, tokens.user.lastName)
+                    tokenManager.saveUserId(tokens.user.id)
                     startActivity(Intent(this@LoginActivity, MainActivity::class.java))
                     finish()
                 } else {

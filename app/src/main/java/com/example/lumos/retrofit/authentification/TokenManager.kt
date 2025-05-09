@@ -63,4 +63,12 @@ class TokenManager(context: Context) {
     fun getLastName(): String {
         return sharedPreferences.getString("last_name", null).toString()
     }
+
+    fun saveUserId(id: Int) {
+        sharedPreferences.edit().putInt("user_id", id).apply()
+    }
+
+    fun getUserId(): Int{
+        return sharedPreferences.getInt("user_id",-1)
+    }
 }

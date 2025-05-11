@@ -32,5 +32,11 @@
             android:textColor="@color/black"
             android:textSize="16sp" />
 
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_check_circle"
+            android:contentDescription="@string/completed_order"
+            app:tint="@color/green" />
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

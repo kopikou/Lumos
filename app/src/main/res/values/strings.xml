@@ -16,4 +16,9 @@
     <string name="name">Имя</string>
     <string name="lastname">Фамилия</string>
     <string name="phone">Телефон</string>
+
+    <string name="no_orders">Нет текущих или будущих заказов</string>
+
+    <string name="no_history_orders">Нет выполненных заказов</string>
+    <string name="completed_order">Выполненный заказ</string>
 </resources>

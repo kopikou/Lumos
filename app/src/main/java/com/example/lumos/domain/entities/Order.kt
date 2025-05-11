@@ -7,6 +7,6 @@ data class Order(
     val performance: Performance,
     val amount: Double,
     val comment: String,
-    val completed: Boolean
+    var completed: Boolean
 )
 

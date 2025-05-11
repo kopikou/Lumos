@@ -169,7 +169,7 @@ class ProfileFragmentArtist(private val artist: Artist) : Fragment() {
     private fun updateUI(artist: Artist) {
         view?.findViewById<TextView>(R.id.tvArtistName)?.text = "${artist.firstName} ${artist.lastName}"
         view?.findViewById<TextView>(R.id.tvPhone)?.text = artist.phone
-        view?.findViewById<TextView>(R.id.tvBalance)?.text = "%,.2f ₽".format(artist.balance).replace(',', ' ')
+        view?.findViewById<TextView>(R.id.tvBalance)?.text = "%,.2f ₽".format(artist.balance)//.replace(',', ' ')
     }
 
     private fun showSuccessMessage() {

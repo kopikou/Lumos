@@ -21,4 +21,14 @@
 
     <string name="no_history_orders">Нет выполненных заказов</string>
     <string name="completed_order">Выполненный заказ</string>
+
+    <string name="order_status">Статус заказа</string>
+    <string name="completed_paid">Выполнен, зарплата выплачена</string>
+    <string name="completed_unpaid">Выполнен, зарплата не выплачена</string>
+    <string name="not_completed">Не выполнен</string>
+
+    <string name="payment_paid">Зарплата выплачена (%1$.2f ₽)</string>
+    <string name="payment_pending">Ожидает выплаты (%1$.2f ₽)</string>
+    <string name="payment_not_applicable">Не выплачивается</string>
+    <string name="payment_error">Ошибка: запись о выплате не найдена</string>
 </resources>

@@ -4,13 +4,18 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.green
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.lumos.R
+import com.example.lumos.domain.entities.Earning
 import com.example.lumos.domain.entities.Order
 import com.example.lumos.retrofit.authentification.TokenManager
 import com.example.lumos.retrofit.services.ArtistServiceImpl
@@ -97,7 +102,7 @@ class ManagementFragmentArtist : Fragment() {
                     .map { it.order }
                     .filter { order ->
                         val orderDate = parseDate(order.date)
-                        order.completed && orderDate.before(today.time)
+                        order.completed && !orderDate.after(today.time)
                     }
                     .sortedByDescending { it.date } // Сортируем по дате в обратном порядке
 
@@ -105,7 +110,7 @@ class ManagementFragmentArtist : Fragment() {
                     showEmptyView(true)
                 } else {
                     showEmptyView(false)
-                    adapter.updateOrders(completedOrders)
+                    adapter.updateOrders(completedOrders,earnings)
                 }
             } catch (e: Exception) {
                 Toast.makeText(requireContext(), "Ошибка загрузки истории заказов", Toast.LENGTH_SHORT).show()
@@ -115,22 +120,79 @@ class ManagementFragmentArtist : Fragment() {
     }
 
     private fun showOrderDetails(order: Order) {
-        val dialogView = LayoutInflater.from(requireContext())
-            .inflate(R.layout.dialog_order_history_details, null)
+//        val dialogView = LayoutInflater.from(requireContext())
+//            .inflate(R.layout.dialog_order_history_details, null)
+//
+//        dialogView.findViewById<TextView>(R.id.tvDate).text = formatDate(order.date)
+//        dialogView.findViewById<TextView>(R.id.tvPerformance).text = order.performance.title
+//        dialogView.findViewById<TextView>(R.id.tvLocation).text = order.location
+//        dialogView.findViewById<TextView>(R.id.tvComment).text = order.comment
+//        dialogView.findViewById<TextView>(R.id.tvAmount).text = "%,.2f ₽".format(order.amount)//.replace(',', ' ')
+//        dialogView.findViewById<TextView>(R.id.tvStatus).text =
+//            if (order.completed) "Выполнен" else "Не выполнен"
+//
+//        AlertDialog.Builder(requireContext())
+//            .setTitle("Детали заказа")
+//            .setView(dialogView)
+//            .setPositiveButton("Закрыть", null)
+//            .show()
+        lifecycleScope.launch {
+            try {
+                // Получаем информацию о выплате для этого заказа и артиста
+                val earning = earningService.getEarnings()
+                    .firstOrNull { it.order.id == order.id && it.artist.id == artistId }
 
-        dialogView.findViewById<TextView>(R.id.tvDate).text = formatDate(order.date)
-        dialogView.findViewById<TextView>(R.id.tvPerformance).text = order.performance.title
-        dialogView.findViewById<TextView>(R.id.tvLocation).text = order.location
-        dialogView.findViewById<TextView>(R.id.tvComment).text = order.comment
-        dialogView.findViewById<TextView>(R.id.tvAmount).text = "%,.2f ₽".format(order.amount)//.replace(',', ' ')
-        dialogView.findViewById<TextView>(R.id.tvStatus).text =
-            if (order.completed) "Выполнен" else "Не выполнен"
+                val dialogView = LayoutInflater.from(requireContext())
+                    .inflate(R.layout.dialog_order_history_details, null)
 
-        AlertDialog.Builder(requireContext())
-            .setTitle("Детали заказа")
-            .setView(dialogView)
-            .setPositiveButton("Закрыть", null)
-            .show()
+                // Заполняем основные данные
+                dialogView.findViewById<TextView>(R.id.tvDate).text = formatDate(order.date)
+                dialogView.findViewById<TextView>(R.id.tvPerformance).text = order.performance.title
+                dialogView.findViewById<TextView>(R.id.tvLocation).text = order.location
+                dialogView.findViewById<TextView>(R.id.tvComment).text = order.comment
+
+                // Устанавливаем сумму из earning, если есть
+//                val amount = earning?.amount ?: 0.0
+//                dialogView.findViewById<TextView>(R.id.tvAmount).text =
+//                    "%,.2f ₽".format(amount)//.replace(',', ' ')
+                dialogView.findViewById<TextView>(R.id.tvAmount).text = "%,.2f ₽".format(order.amount)
+
+                // Определяем статусы
+                val completionStatus = if (order.completed) "Выполнен" else "Не выполнен"
+                val paymentStatus = when {
+                    !order.completed -> "Не выплачивается"
+                    earning == null -> "Ошибка: запись о выплате не найдена"
+                    earning.paid -> "Зарплата выплачена (${earning.amount} ₽)"
+                    else -> "Ожидает выплаты (${earning.amount} ₽)"
+                }
+
+                // Устанавливаем статусы
+                dialogView.findViewById<TextView>(R.id.tvCompletionStatus).text = completionStatus
+                dialogView.findViewById<TextView>(R.id.tvPaymentStatus).text = paymentStatus
+
+                // Цвета статусов
+                val completionColor = if (order.completed) R.color.green else R.color.orange
+                val paymentColor = when {
+                    !order.completed -> R.color.orange
+                    earning?.paid == true -> R.color.green
+                    else -> R.color.yellow
+                }
+
+                dialogView.findViewById<TextView>(R.id.tvCompletionStatus).setTextColor(
+                    ContextCompat.getColor(requireContext(), completionColor))
+                dialogView.findViewById<TextView>(R.id.tvPaymentStatus).setTextColor(
+                    ContextCompat.getColor(requireContext(), paymentColor))
+
+                AlertDialog.Builder(requireContext())
+                    .setTitle("Детали заказа")
+                    .setView(dialogView)
+                    .setPositiveButton("Закрыть", null)
+                    .show()
+
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(), "Ошибка загрузки данных", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun parseDate(dateString: String): Date {
@@ -161,11 +223,56 @@ class ManagementFragmentArtist : Fragment() {
         private val onItemClick: (Order) -> Unit
     ) : RecyclerView.Adapter<HistoryOrderAdapter.OrderViewHolder>() {
 
+        //private val orders = mutableListOf<Order>()
         private val orders = mutableListOf<Order>()
+        private val earningsMap = mutableMapOf<Int, Earning>() // orderId to Earning
+
+        fun updateOrders(newOrders: List<Order>, earnings: List<Earning>) {
+            orders.clear()
+            earningsMap.clear()
+            orders.addAll(newOrders)
+            earnings.forEach { earning ->
+                earningsMap[earning.order.id] = earning
+            }
+            notifyDataSetChanged()
+        }
+
+        override fun onBindViewHolder(holder: OrderViewHolder, position: Int) {
+            val order = orders[position]
+            holder.date.text = formatDateShort(order.date)
+            holder.performance.text = order.performance.title
+
+            // Получаем информацию о выплате
+            val earning = earningsMap[order.id]
+
+            // Устанавливаем иконку в зависимости от статусов
+            val iconRes = R.drawable.ic_check_circle
+
+            val iconColor = when {
+                !order.completed -> R.color.orange
+                earning?.paid == true -> R.color.green
+                else -> R.color.yellow
+            }
+
+            val drawable = AppCompatResources.getDrawable(requireContext(), iconRes)?.mutate()
+            drawable?.setTint(ContextCompat.getColor(requireContext(), iconColor))
+            holder.statusIcon.setImageDrawable(drawable)
+            //holder.statusIcon.setImageResource(iconRes)
+            holder.statusIcon.contentDescription = when {
+                !order.completed -> "Заказ не выполнен"
+                earning?.paid == true -> "Зарплата выплачена"
+                else -> "Ожидает выплаты"
+            }
+
+            holder.itemView.setOnClickListener {
+                onItemClick(order)
+            }
+        }
 
         inner class OrderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             val date: TextView = itemView.findViewById(R.id.orderDate)
             val performance: TextView = itemView.findViewById(R.id.orderPerformance)
+            val statusIcon: ImageView = itemView.findViewById(R.id.ivStatus)
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OrderViewHolder {
@@ -174,23 +281,24 @@ class ManagementFragmentArtist : Fragment() {
             return OrderViewHolder(view)
         }
 
-        override fun onBindViewHolder(holder: OrderViewHolder, position: Int) {
-            val order = orders[position]
-            holder.date.text = formatDateShort(order.date)
-            holder.performance.text = order.performance.title
+//        override fun onBindViewHolder(holder: OrderViewHolder, position: Int) {
+//            val order = orders[position]
+//            holder.date.text = formatDateShort(order.date)
+//            holder.performance.text = order.performance.title
+//
+//            holder.itemView.setOnClickListener {
+//                onItemClick(order)
+//            }
+//        }
 
-            holder.itemView.setOnClickListener {
-                onItemClick(order)
-            }
-        }
 
         override fun getItemCount() = orders.size
 
-        fun updateOrders(newOrders: List<Order>) {
-            orders.clear()
-            orders.addAll(newOrders)
-            notifyDataSetChanged()
-        }
+//        fun updateOrders(newOrders: List<Order>) {
+//            orders.clear()
+//            orders.addAll(newOrders)
+//            notifyDataSetChanged()
+//        }
 
         private fun formatDateShort(dateString: String): String {
             return try {

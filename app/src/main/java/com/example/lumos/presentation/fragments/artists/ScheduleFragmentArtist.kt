@@ -350,8 +350,19 @@ class ScheduleFragmentArtist : Fragment() {
     private fun updateOrderStatus(order: Order, isCompleted: Boolean) {
         lifecycleScope.launch {
             try {
+//                val updatedOrder = order.copy(completed = isCompleted)
+//                orderService.updateOrder(order.id, OrderCreateUpdateSerializer.fromOrder(updatedOrder))
+//                adapter.updateOrderStatus(order.id, isCompleted)
+                // 1. Обновляем статус заказа
                 val updatedOrder = order.copy(completed = isCompleted)
                 orderService.updateOrder(order.id, OrderCreateUpdateSerializer.fromOrder(updatedOrder))
+
+                // 2. Если заказ выполнен, начисляем зарплату
+                if (isCompleted) {
+                    calculateAndAddSalary(order)
+                }
+
+                // 3. Обновляем UI
                 adapter.updateOrderStatus(order.id, isCompleted)
                 Toast.makeText(requireContext(), "Статус обновлен", Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
@@ -359,6 +370,59 @@ class ScheduleFragmentArtist : Fragment() {
             }
         }
     }
+
+    private suspend fun calculateAndAddSalary(order: Order) {
+        try {
+            // 1. Получаем текущего артиста
+            val artist = artistService.getArtistByName(
+                tokenManager.getFirstName(),
+                tokenManager.getLastName()
+            )
+
+            // 2. Получаем информацию о заработке для этого заказа
+            val earning = earningService.getEarnings()
+                .firstOrNull { it.order.id == order.id && it.artist.id == artist.id }
+
+            earning?.let {
+                // 3. Если зарплата еще не выплачена
+                if (!it.paid) {
+                    // 4. Обновляем баланс артиста
+                    val newBalance = artist.balance + it.amount
+                    val updatedArtist = artist.copy(balance = newBalance)
+                    artistService.updateArtist(artist.id, updatedArtist)
+
+//                    // 5. Помечаем заработок как выплаченный
+//                    val updatedEarning = it.copy(paid = true)
+//                    earningService.updateEarning(
+//                        it.order.id,
+//                        EarningCreateUpdateSerializer.fromEarning(updatedEarning)
+//                    )
+//
+//                    // 6. Обновляем локальные данные
+//                    tokenManager.saveBalance(newBalance)
+                    updateBalanceInUI(newBalance)
+
+                    Toast.makeText(
+                        requireContext(),
+                        "Зарплата ${it.amount} ₽ начислена",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        } catch (e: Exception) {
+            Toast.makeText(
+                requireContext(),
+                "Ошибка начисления зарплаты",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
+    private fun updateBalanceInUI(newBalance: Double) {
+        view?.findViewById<TextView>(R.id.tvBalance)?.text =
+            "%,.2f ₽".format(newBalance)//.replace(',', ' ')
+    }
+
     private fun parseDate(dateString: String): Date {
         return try {
             SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(dateString) ?: Date()

@@ -15,7 +15,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Дата: "
+            android:text="@string/date"
             android:textColor="@color/black"
             android:textSize="16sp"/>
 
@@ -23,6 +23,7 @@
             android:id="@+id/tvDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
             android:textColor="@color/black"
             android:textSize="16sp"/>
     </LinearLayout>
@@ -36,7 +37,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Номер: "
+            android:text="@string/performance"
             android:textColor="@color/black"
             android:textSize="16sp"/>
 
@@ -44,6 +45,7 @@
             android:id="@+id/tvPerformance"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
             android:textColor="@color/black"
             android:textSize="16sp"/>
     </LinearLayout>
@@ -57,7 +59,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Место: "
+            android:text="@string/place"
             android:textColor="@color/black"
             android:textSize="16sp"/>
 
@@ -65,6 +67,7 @@
             android:id="@+id/tvLocation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
             android:textColor="@color/black"
             android:textSize="16sp"/>
     </LinearLayout>
@@ -78,7 +81,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Сумма: "
+            android:text="@string/sum"
             android:textColor="@color/black"
             android:textSize="16sp"/>
 
@@ -86,6 +89,7 @@
             android:id="@+id/tvAmount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
             android:textColor="@color/primaryColor"
             android:textSize="16sp"/>
     </LinearLayout>
@@ -93,7 +97,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Комментарий:"
+        android:text="@string/comment"
         android:textColor="@color/black"
         android:textSize="16sp"
         android:layout_marginBottom="4dp"/>
@@ -114,7 +118,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Выполнен: "
+            android:text="@string/done"
             android:textColor="@color/black"
             android:textSize="16sp"/>
 

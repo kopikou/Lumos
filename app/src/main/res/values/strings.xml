@@ -31,4 +31,10 @@
     <string name="payment_pending">Ожидает выплаты (%1$.2f ₽)</string>
     <string name="payment_not_applicable">Не выплачивается</string>
     <string name="payment_error">Ошибка: запись о выплате не найдена</string>
+    <string name="date">Дата: </string>
+    <string name="performance">Номер: </string>
+    <string name="place">Место: </string>
+    <string name="sum">Сумма: </string>
+    <string name="comment">Комментарий: </string>
+    <string name="done">Выполнен: </string>
 </resources>

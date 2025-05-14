@@ -78,11 +78,14 @@ class MainActivity : AppCompatActivity() {
         setupBottomNavigation()
 
         // Observe the artist data
-        viewModel.artist.observe(this) { artist ->
-            // Установка начального фрагмента
-            if (savedInstanceState == null) {
-                bottomNav.selectedItemId = R.id.nav_schedule
-            }
+//        viewModel.artist.observe(this) { artist ->
+//            // Установка начального фрагмента
+//            if (savedInstanceState == null) {
+//                bottomNav.selectedItemId = R.id.nav_schedule
+//            }
+//        }
+        if (savedInstanceState == null) {
+            bottomNav.selectedItemId = R.id.nav_schedule
         }
 
         lifecycleScope.launch {

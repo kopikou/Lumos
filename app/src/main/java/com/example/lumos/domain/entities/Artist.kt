@@ -8,4 +8,3 @@ data class Artist(
     val phone: String,
     val balance: Double
 )
-

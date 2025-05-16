@@ -7,4 +7,3 @@ data class ShowRate(
     @SerializedName("show_type") val showType: Type,
     val rate: Double
 )
-

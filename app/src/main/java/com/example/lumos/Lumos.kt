@@ -1,7 +1,7 @@
 package com.example.lumos
 
 import android.app.Application
-import com.example.lumos.retrofit.ApiClient
+import com.example.lumos.data.remote.ApiClient
 
 class Lumos : Application() {
     override fun onCreate() {

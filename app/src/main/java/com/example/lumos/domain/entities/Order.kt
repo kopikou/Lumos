@@ -9,4 +9,3 @@ data class Order(
     val comment: String,
     var completed: Boolean
 )
-

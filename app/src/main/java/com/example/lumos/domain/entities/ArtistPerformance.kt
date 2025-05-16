@@ -5,4 +5,3 @@ data class ArtistPerformance(
     val performance: Performance,
     val rate: ShowRate
 )
-

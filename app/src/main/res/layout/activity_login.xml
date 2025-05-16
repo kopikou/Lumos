@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:padding="24dp"
     android:background="@color/white"
-    tools:context=".presentation.activities.LoginActivity">
+    tools:context=".presentation.views.activities.LoginActivity">
 
     <!-- Логотип или заголовок приложения -->
     <ImageView
@@ -42,12 +42,12 @@
             android:id="@+id/usernameEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="48dp"
-            android:inputType="textEmailAddress"
             android:imeOptions="actionNext"
-            android:maxLines="1"
             android:importantForAccessibility="no"
-            tools:ignore="LabelFor"/>
+            android:inputType="textEmailAddress"
+            android:maxLines="1"
+            android:minHeight="48dp"
+            tools:ignore="LabelFor" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Поле для ввода пароля -->

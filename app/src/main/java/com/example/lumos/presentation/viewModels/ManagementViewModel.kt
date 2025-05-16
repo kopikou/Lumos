@@ -6,14 +6,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.lumos.domain.entities.Artist
 import com.example.lumos.domain.entities.Earning
-import com.example.lumos.domain.entities.EarningCreateUpdateSerializer
+import com.example.lumos.domain.entities.EarningCreateUpdateDto
 import com.example.lumos.domain.entities.Performance
-import com.example.lumos.retrofit.services.ArtistPerformanceServiceImpl
-import com.example.lumos.retrofit.services.ArtistServiceImpl
-import com.example.lumos.retrofit.services.EarningServiceImpl
-import com.example.lumos.retrofit.services.OrderServiceImpl
-import com.example.lumos.retrofit.services.PerformanceServiceImpl
-import com.example.lumos.retrofit.services.ShowRateServiceImpl
+import com.example.lumos.data.remote.impl.ArtistPerformanceServiceImpl
+import com.example.lumos.data.remote.impl.ArtistServiceImpl
+import com.example.lumos.data.remote.impl.EarningServiceImpl
+import com.example.lumos.data.remote.impl.OrderServiceImpl
+import com.example.lumos.data.remote.impl.PerformanceServiceImpl
 import kotlinx.coroutines.launch
 
 class ManagementViewModel : ViewModel() {
@@ -97,7 +96,7 @@ class ManagementViewModel : ViewModel() {
 
                 // Помечаем как paid только связанные earnings
                 artistWithUnpaid.unpaidEarnings.forEach { earning ->
-                    val updatedEarning = EarningCreateUpdateSerializer.fromEarning(
+                    val updatedEarning = EarningCreateUpdateDto.fromEarning(
                         earning.copy(paid = true)
                     )
                     earningService.updateEarning(earning.id, updatedEarning)

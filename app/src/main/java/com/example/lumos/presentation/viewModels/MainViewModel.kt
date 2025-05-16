@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.lumos.domain.entities.Artist
-import com.example.lumos.retrofit.services.ArtistServiceImpl
+import com.example.lumos.data.remote.impl.ArtistServiceImpl
 import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {

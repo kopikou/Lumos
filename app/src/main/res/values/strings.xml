@@ -39,4 +39,6 @@
     <string name="done">Выполнен: </string>
     <string name="select_performance">Выберите номер</string>
     <string name="manager_profile_title">Профиль менеджера</string>
+    <string name="Paid">Выплатить</string>
+    <string name="unpaidArtists">Артисты с невыплаченными зарплатами</string>
 </resources>

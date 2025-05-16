@@ -121,10 +121,18 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.nav_profile -> {
-                    viewModel.artist.value?.let { artist ->
-                        replaceFragmentForCurrentUser(ProfileFragmentManager(), ProfileFragmentArtist(artist))
+//                    viewModel.artist.value?.let { artist ->
+//                        replaceFragmentForCurrentUser(ProfileFragmentManager(), ProfileFragmentArtist(artist))
+//                    }
+                    if (tokenManager.isAdmin()) {
+                        // Для администратора
+                        replaceFragment(ProfileFragmentManager())
+                    } else {
+                        // Для артиста
+                        viewModel.artist.value?.let { artist ->
+                            replaceFragment(ProfileFragmentArtist(artist))
+                        }
                     }
-                    replaceFragment(ProfileFragmentManager())
                     true
                 }
                 else -> false

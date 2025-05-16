@@ -1,9 +1,6 @@
 package com.example.lumos.presentation.viewModels
 
-import android.app.Application
 import android.util.Log
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -29,7 +26,6 @@ class ManagementViewModel : ViewModel() {
 
     private val artistPerformanceService = ArtistPerformanceServiceImpl()
     private val performanceService = PerformanceServiceImpl()
-    private val showRateService = ShowRateServiceImpl()
 
     val artistsCount = MutableLiveData<Int>()
     val allArtists = MutableLiveData<List<Artist>>()

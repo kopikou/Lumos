@@ -9,7 +9,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
-import androidx.core.graphics.green
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -27,17 +26,6 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
-//class ManagementFragmentArtist : Fragment() {
-//
-//    override fun onCreateView(
-//        inflater: LayoutInflater,
-//        container: ViewGroup?,
-//        savedInstanceState: Bundle?
-//    ): View? {
-//        // Inflate the layout for this fragment
-//        return inflater.inflate(R.layout.fragment_management_artists, container, false)
-//    }
-//}
 class ManagementFragmentArtist : Fragment() {
     private lateinit var tokenManager: TokenManager
     private lateinit var earningService: EarningServiceImpl
@@ -120,22 +108,6 @@ class ManagementFragmentArtist : Fragment() {
     }
 
     private fun showOrderDetails(order: Order) {
-//        val dialogView = LayoutInflater.from(requireContext())
-//            .inflate(R.layout.dialog_order_history_details, null)
-//
-//        dialogView.findViewById<TextView>(R.id.tvDate).text = formatDate(order.date)
-//        dialogView.findViewById<TextView>(R.id.tvPerformance).text = order.performance.title
-//        dialogView.findViewById<TextView>(R.id.tvLocation).text = order.location
-//        dialogView.findViewById<TextView>(R.id.tvComment).text = order.comment
-//        dialogView.findViewById<TextView>(R.id.tvAmount).text = "%,.2f ₽".format(order.amount)//.replace(',', ' ')
-//        dialogView.findViewById<TextView>(R.id.tvStatus).text =
-//            if (order.completed) "Выполнен" else "Не выполнен"
-//
-//        AlertDialog.Builder(requireContext())
-//            .setTitle("Детали заказа")
-//            .setView(dialogView)
-//            .setPositiveButton("Закрыть", null)
-//            .show()
         lifecycleScope.launch {
             try {
                 // Получаем информацию о выплате для этого заказа и артиста
@@ -150,11 +122,6 @@ class ManagementFragmentArtist : Fragment() {
                 dialogView.findViewById<TextView>(R.id.tvPerformance).text = order.performance.title
                 dialogView.findViewById<TextView>(R.id.tvLocation).text = order.location
                 dialogView.findViewById<TextView>(R.id.tvComment).text = order.comment
-
-                // Устанавливаем сумму из earning, если есть
-//                val amount = earning?.amount ?: 0.0
-//                dialogView.findViewById<TextView>(R.id.tvAmount).text =
-//                    "%,.2f ₽".format(amount)//.replace(',', ' ')
                 dialogView.findViewById<TextView>(R.id.tvAmount).text = "%,.2f ₽".format(order.amount)
 
                 // Определяем статусы
@@ -223,7 +190,6 @@ class ManagementFragmentArtist : Fragment() {
         private val onItemClick: (Order) -> Unit
     ) : RecyclerView.Adapter<HistoryOrderAdapter.OrderViewHolder>() {
 
-        //private val orders = mutableListOf<Order>()
         private val orders = mutableListOf<Order>()
         private val earningsMap = mutableMapOf<Int, Earning>() // orderId to Earning
 
@@ -257,7 +223,6 @@ class ManagementFragmentArtist : Fragment() {
             val drawable = AppCompatResources.getDrawable(requireContext(), iconRes)?.mutate()
             drawable?.setTint(ContextCompat.getColor(requireContext(), iconColor))
             holder.statusIcon.setImageDrawable(drawable)
-            //holder.statusIcon.setImageResource(iconRes)
             holder.statusIcon.contentDescription = when {
                 !order.completed -> "Заказ не выполнен"
                 earning?.paid == true -> "Зарплата выплачена"
@@ -281,24 +246,7 @@ class ManagementFragmentArtist : Fragment() {
             return OrderViewHolder(view)
         }
 
-//        override fun onBindViewHolder(holder: OrderViewHolder, position: Int) {
-//            val order = orders[position]
-//            holder.date.text = formatDateShort(order.date)
-//            holder.performance.text = order.performance.title
-//
-//            holder.itemView.setOnClickListener {
-//                onItemClick(order)
-//            }
-//        }
-
-
         override fun getItemCount() = orders.size
-
-//        fun updateOrders(newOrders: List<Order>) {
-//            orders.clear()
-//            orders.addAll(newOrders)
-//            notifyDataSetChanged()
-//        }
 
         private fun formatDateShort(dateString: String): String {
             return try {

@@ -11,7 +11,6 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.lumos.R
-import com.example.lumos.domain.entities.Artist
 import com.example.lumos.domain.services.EarningService
 import com.example.lumos.domain.services.OrderService
 import com.example.lumos.presentation.activities.LoginActivity
@@ -31,7 +30,6 @@ class ProfileFragmentManager : Fragment() {
     private lateinit var orderService: OrderService
     private lateinit var earningService: EarningService
     private var userId: Int = 0
-    private lateinit var currentArtist: Artist
 
     // Views
     private lateinit var tvIncome: TextView

@@ -134,9 +134,6 @@ class ScheduleFragmentArtist : Fragment() {
     private fun updateOrderStatus(order: Order, isCompleted: Boolean) {
         lifecycleScope.launch {
             try {
-//                val updatedOrder = order.copy(completed = isCompleted)
-//                orderService.updateOrder(order.id, OrderCreateUpdateSerializer.fromOrder(updatedOrder))
-//                adapter.updateOrderStatus(order.id, isCompleted)
                 // 1. Обновляем статус заказа
                 val updatedOrder = order.copy(completed = isCompleted)
                 orderService.updateOrder(order.id, OrderCreateUpdateSerializer.fromOrder(updatedOrder))
@@ -175,15 +172,6 @@ class ScheduleFragmentArtist : Fragment() {
                     val updatedArtist = artist.copy(balance = newBalance)
                     artistService.updateArtist(artist.id, updatedArtist)
 
-//                    // 5. Помечаем заработок как выплаченный
-//                    val updatedEarning = it.copy(paid = true)
-//                    earningService.updateEarning(
-//                        it.order.id,
-//                        EarningCreateUpdateSerializer.fromEarning(updatedEarning)
-//                    )
-//
-//                    // 6. Обновляем локальные данные
-//                    tokenManager.saveBalance(newBalance)
                     updateBalanceInUI(newBalance)
 
                     Toast.makeText(
@@ -230,48 +218,6 @@ class ScheduleFragmentArtist : Fragment() {
         }
     }
 
-//    inner class OrderAdapter(private var orders: List<Order>) :
-//        RecyclerView.Adapter<OrderAdapter.OrderViewHolder>() {
-//
-//        inner class OrderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-//            val date: TextView = itemView.findViewById(R.id.orderDate)
-//            val location: TextView = itemView.findViewById(R.id.orderLocation)
-//            val performance: TextView = itemView.findViewById(R.id.orderPerformance)
-//            val amount: TextView = itemView.findViewById(R.id.orderAmount)
-//        }
-//
-//        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OrderViewHolder {
-//            val view = LayoutInflater.from(parent.context)
-//                .inflate(R.layout.item_order, parent, false)
-//            return OrderViewHolder(view)
-//        }
-//
-//        override fun onBindViewHolder(holder: OrderViewHolder, position: Int) {
-//            val order = orders[position]
-//            holder.date.text = formatDate(order.date)
-//            holder.location.text = order.location
-//            holder.performance.text = order.performance.title
-//            holder.amount.text = "%,.2f ₽".format(order.amount)//.replace(',', ' ')
-//        }
-//
-//        override fun getItemCount() = orders.size
-//
-//        fun updateOrders(newOrders: List<Order>) {
-//            orders = newOrders
-//            notifyDataSetChanged()
-//        }
-//
-//        private fun formatDate(dateString: String): String {
-//            return try {
-//                val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-//                val outputFormat = SimpleDateFormat("dd MMMM yyyy", Locale("ru"))
-//                val date = inputFormat.parse(dateString)
-//                outputFormat.format(date ?: Date())
-//            } catch (e: Exception) {
-//                dateString
-//            }
-//        }
-//    }
     inner class OrderAdapter(
         private val onItemClick: (Order) -> Unit
     ) : RecyclerView.Adapter<OrderAdapter.OrderViewHolder>() {

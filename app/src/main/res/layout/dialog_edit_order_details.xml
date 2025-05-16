@@ -24,7 +24,7 @@
                 android:id="@+id/etDate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Дата"
+                android:hint="@string/dateInp"
                 android:inputType="none"/>
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -57,7 +57,7 @@
                 android:id="@+id/etLocation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Место"
+                android:hint="@string/placeInp"
                 android:inputType="textCapWords"/>
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -74,7 +74,7 @@
                 android:id="@+id/etAmount"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Сумма"
+                android:hint="@string/sumInp"
                 android:inputType="numberDecimal"/>
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -91,7 +91,7 @@
                 android:id="@+id/etComment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Комментарий"
+                android:hint="@string/commentInp"
                 android:inputType="textCapSentences"/>
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -99,7 +99,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Выберите артистов:"
+            android:text="@string/selectartists"
             android:textColor="@color/black"
             android:textSize="16sp"
             android:layout_marginBottom="8dp"/>

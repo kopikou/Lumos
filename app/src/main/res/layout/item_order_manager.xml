@@ -40,6 +40,6 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:contentDescription="Удалить заказ"/>
+            android:contentDescription="@string/delete_order"/>
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

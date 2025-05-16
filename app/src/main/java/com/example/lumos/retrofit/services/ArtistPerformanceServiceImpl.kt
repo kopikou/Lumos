@@ -4,8 +4,6 @@ import android.content.ContentValues.TAG
 import android.util.Log
 import com.example.lumos.domain.entities.ArtistPerformance
 import com.example.lumos.domain.entities.ArtistPerformanceCreateUpdateSerializer
-import com.example.lumos.domain.entities.ShowRate
-import com.example.lumos.domain.entities.ShowRateCreateUpdateSerializer
 import com.example.lumos.domain.services.ArtistPerformanceService
 import com.example.lumos.retrofit.ApiClient
 

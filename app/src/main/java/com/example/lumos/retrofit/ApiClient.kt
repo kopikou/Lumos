@@ -27,13 +27,6 @@ object ApiClient {
         tokenManager = TokenManager(context)
     }
     // Общий клиент для всех запросов
-//    private val okHttpClient = OkHttpClient.Builder()
-//        .addInterceptor(AuthInterceptor(tokenManager))
-//        .authenticator(TokenAuthenticator(tokenManager))
-//        .addInterceptor(HttpLoggingInterceptor().apply {
-//            level = HttpLoggingInterceptor.Level.BODY
-//        })
-//        .build()
     private val okHttpClient by lazy {
         OkHttpClient.Builder().apply {
             tokenManager?.let { manager ->
@@ -47,11 +40,6 @@ object ApiClient {
     }
 
     // Единый экземпляр Retrofit
-//    private val retrofit = Retrofit.Builder()
-//        .baseUrl(BASE_URL)
-//        .client(okHttpClient) // используем общий клиент
-//        .addConverterFactory(GsonConverterFactory.create())
-//        .build()
     private val retrofit by lazy {
         Retrofit.Builder()
             .baseUrl(BASE_URL)

@@ -31,14 +31,37 @@
     <string name="payment_pending">Ожидает выплаты (%1$.2f ₽)</string>
     <string name="payment_not_applicable">Не выплачивается</string>
     <string name="payment_error">Ошибка: запись о выплате не найдена</string>
+
     <string name="date">Дата: </string>
     <string name="performance">Номер: </string>
     <string name="place">Место: </string>
     <string name="sum">Сумма: </string>
     <string name="comment">Комментарий: </string>
     <string name="done">Выполнен: </string>
+
     <string name="select_performance">Выберите номер</string>
     <string name="manager_profile_title">Профиль менеджера</string>
     <string name="Paid">Выплатить</string>
     <string name="unpaidArtists">Артисты с невыплаченными зарплатами</string>
+    <string name="artistsAll">Артисты коллектива</string>
+    <string name="performancesAll">Репертуар коллектива</string>
+    <string name="performancesRates">Номера и ставки:</string>
+
+    <string name="dateInp">Дата</string>
+    <string name="placeInp">Место</string>
+    <string name="sumInp">Сумма</string>
+    <string name="commentInp">Комментарий</string>
+    <string name="selectartists">Выберите артистов:</string>
+    <string name="status_order">Статус выполнения:</string>
+    <string name="status_paiment">Статус выплаты:</string>
+    <string name="working_artists">Работающие артисты:</string>
+    <string name="no_artists">В этом номере нет артистов</string>
+    <string name="unpaid_salies">Невыплаченные зарплаты</string>
+    <string name="set_null">0</string>
+    <string name="repertoir">Репертуар коллектива</string>
+    <string name="income">Общий доход</string>
+    <string name="expenses">Расходы на зарплаты</string>
+    <string name="profit">Чистая прибыль</string>
+    <string name="add_order">Добавить заказ</string>
+    <string name="delete_order">Удалить заказ</string>
 </resources>

@@ -4,8 +4,6 @@ import android.content.ContentValues.TAG
 import android.util.Log
 import com.example.lumos.domain.entities.Order
 import com.example.lumos.domain.entities.OrderCreateUpdateSerializer
-import com.example.lumos.domain.entities.ShowRate
-import com.example.lumos.domain.entities.ShowRateCreateUpdateSerializer
 import com.example.lumos.domain.services.OrderService
 import com.example.lumos.retrofit.ApiClient
 

@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
 import android.widget.CheckBox
 import android.widget.ImageButton
 import android.widget.LinearLayout
@@ -22,7 +21,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.lumos.R
 import com.example.lumos.domain.entities.Artist
 import com.example.lumos.domain.entities.ArtistPerformance
-import com.example.lumos.domain.entities.Earning
 import com.example.lumos.domain.entities.EarningCreateUpdateSerializer
 import com.example.lumos.domain.entities.Order
 import com.example.lumos.domain.entities.OrderCreateUpdateSerializer
@@ -37,10 +35,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.launch
-import java.text.ParseException
 import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
@@ -111,7 +106,6 @@ class ScheduleFragmentManager : Fragment() {
 
         val tilDate = dialogView.findViewById<TextInputLayout>(R.id.tilDate)
         val etDate = dialogView.findViewById<TextInputEditText>(R.id.etDate)
-        val tilPerformance = dialogView.findViewById<TextInputLayout>(R.id.tilPerformance)
         val spinnerPerformance = dialogView.findViewById<Spinner>(R.id.spinnerPerformance)
         val tilLocation = dialogView.findViewById<TextInputLayout>(R.id.tilLocation)
         val etLocation = dialogView.findViewById<TextInputEditText>(R.id.etLocation)
@@ -435,7 +429,6 @@ class ScheduleFragmentManager : Fragment() {
                 // Получаем ссылки на элементы
                 val tilDate = dialogView.findViewById<TextInputLayout>(R.id.tilDate)
                 val etDate = dialogView.findViewById<TextInputEditText>(R.id.etDate)
-                val tilPerformance = dialogView.findViewById<TextInputLayout>(R.id.tilPerformance)
                 val spinnerPerformance = dialogView.findViewById<Spinner>(R.id.spinnerPerformance)
                 val tilLocation = dialogView.findViewById<TextInputLayout>(R.id.tilLocation)
                 val etLocation = dialogView.findViewById<TextInputEditText>(R.id.etLocation)
@@ -793,17 +786,6 @@ class ScheduleFragmentManager : Fragment() {
             SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(dateString) ?: Date()
         } catch (e: Exception) {
             Date()
-        }
-    }
-
-    private fun formatDate(dateString: String): String {
-        return try {
-            val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-            val outputFormat = SimpleDateFormat("dd MMMM yyyy", Locale("ru"))
-            val date = inputFormat.parse(dateString)
-            outputFormat.format(date ?: Date())
-        } catch (e: Exception) {
-            dateString
         }
     }
 

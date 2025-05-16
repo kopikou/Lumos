@@ -1,10 +1,7 @@
 package com.example.lumos.presentation.fragments.artists
-import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
-import android.text.InputFilter
-import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -122,7 +119,6 @@ class ProfileFragmentArtist(private val artist: Artist) : Fragment() {
                             )
 
                             // Обновляем локальные данные
-                            //updateUI(newFirstName, newLastName, newPhone)
                             currentArtist = updatedArtist
                             updateUI(updatedArtist)
                             showSuccessMessage()
@@ -162,10 +158,6 @@ class ProfileFragmentArtist(private val artist: Artist) : Fragment() {
         }
     }
 
-//    private fun updateUI(firstName: String, lastName: String, phone: String) {
-//        view?.findViewById<TextView>(R.id.tvArtistName)?.text = "$firstName $lastName"
-//        view?.findViewById<TextView>(R.id.tvPhone)?.text = phone
-//    }
     private fun updateUI(artist: Artist) {
         view?.findViewById<TextView>(R.id.tvArtistName)?.text = "${artist.firstName} ${artist.lastName}"
         view?.findViewById<TextView>(R.id.tvPhone)?.text = artist.phone

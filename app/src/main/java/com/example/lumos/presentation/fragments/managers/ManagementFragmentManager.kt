@@ -93,8 +93,6 @@ class ManagementFragmentManager : Fragment() {
 
 
     private fun showUnpaidArtistsDialog() {
-//        val dialog = Dialog(requireContext())
-//        dialog.setContentView(R.layout.dialog_unpaid_artists)
         val dialog = Dialog(requireContext()).apply {
             setContentView(R.layout.dialog_unpaid_artists)
             window?.setLayout(

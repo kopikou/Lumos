@@ -18,7 +18,7 @@ class MainViewModel : ViewModel() {
                 val artist = ArtistServiceImpl().getArtistByName(firstName, lastName)
                 _artist.postValue(artist)
             } catch (e: Exception) {
-                // Handle error
+
             }
         }
     }

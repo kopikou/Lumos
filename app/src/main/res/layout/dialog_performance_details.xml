@@ -39,7 +39,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Работающие артисты:"
+        android:text="@string/working_artists"
         android:textSize="18sp"
         android:layout_marginTop="16dp"/>
 
@@ -47,7 +47,7 @@
         android:id="@+id/no_artists_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="В этом номере нет артистов"
+        android:text="@string/no_artists"
         android:visibility="gone"
         android:layout_marginTop="8dp"/>
 

@@ -37,4 +37,6 @@
     <string name="sum">Сумма: </string>
     <string name="comment">Комментарий: </string>
     <string name="done">Выполнен: </string>
+    <string name="select_performance">Выберите номер</string>
+    <string name="manager_profile_title">Профиль менеджера</string>
 </resources>

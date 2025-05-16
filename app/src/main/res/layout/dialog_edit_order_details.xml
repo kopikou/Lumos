@@ -17,16 +17,15 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="62dp"
-
+            android:layout_marginBottom="8dp"
             app:errorEnabled="true">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etDate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:focusable="false"
                 android:hint="Дата"
-                android:inputType="none" />
+                android:inputType="none"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Номер -->
@@ -42,7 +41,7 @@
                 android:id="@+id/spinnerPerformance"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:prompt="@string/select_performance" />
+                android:prompt="@string/select_performance"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Место -->
@@ -59,7 +58,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Место"
-                android:inputType="textCapWords" />
+                android:inputType="textCapWords"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Сумма -->
@@ -76,7 +75,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Сумма"
-                android:inputType="numberDecimal" />
+                android:inputType="numberDecimal"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Комментарий -->
@@ -93,7 +92,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Комментарий"
-                android:inputType="textCapSentences" />
+                android:inputType="textCapSentences"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Выбор артистов -->
@@ -111,5 +110,25 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"/>
 
+        <!-- Статус выполнения -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/done"
+                android:textColor="@color/black"
+                android:textSize="16sp"/>
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/switchCompleted"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:trackTint="@color/primaryColor"/>
+        </LinearLayout>
     </LinearLayout>
 </ScrollView>

@@ -22,4 +22,8 @@
     <color name="grey">#8A8A7F</color>
     <color name="red">#F44336</color>
     <color name="primaryColor">#6200EE</color>
+
+    <color name="green_light">#10F021</color>
+    <color name="red_light">#EF304E</color>
+    <color name="blue_light">#26A0F4</color>
 </resources>

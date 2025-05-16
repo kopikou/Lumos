@@ -124,6 +124,7 @@ class MainActivity : AppCompatActivity() {
                     viewModel.artist.value?.let { artist ->
                         replaceFragmentForCurrentUser(ProfileFragmentManager(), ProfileFragmentArtist(artist))
                     }
+                    replaceFragment(ProfileFragmentManager())
                     true
                 }
                 else -> false

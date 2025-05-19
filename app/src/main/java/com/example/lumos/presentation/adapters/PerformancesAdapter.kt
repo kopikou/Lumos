@@ -8,9 +8,9 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.lumos.R
-import com.example.lumos.presentation.viewModels.ManagementViewModel
+import com.example.lumos.domain.usecases.PerformanceWithRate
 
-class PerformancesAdapter : ListAdapter<ManagementViewModel.PerformanceWithRate, PerformancesAdapter.PerformanceViewHolder>(PerformanceDiffCallback()) {
+class PerformancesAdapter : ListAdapter<PerformanceWithRate, PerformancesAdapter.PerformanceViewHolder>(PerformanceDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PerformanceViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -26,23 +26,23 @@ class PerformancesAdapter : ListAdapter<ManagementViewModel.PerformanceWithRate,
         private val titleText: TextView = itemView.findViewById(R.id.performance_title)
         private val rateText: TextView = itemView.findViewById(R.id.performance_rate)
 
-        fun bind(performanceWithRate: ManagementViewModel.PerformanceWithRate) {
+        fun bind(performanceWithRate: PerformanceWithRate) {
             titleText.text = performanceWithRate.performance.title
             rateText.text = "Ставка: ${performanceWithRate.rate} руб."
         }
     }
 
-    class PerformanceDiffCallback : DiffUtil.ItemCallback<ManagementViewModel.PerformanceWithRate>() {
+    class PerformanceDiffCallback : DiffUtil.ItemCallback<PerformanceWithRate>() {
         override fun areItemsTheSame(
-            oldItem: ManagementViewModel.PerformanceWithRate,
-            newItem: ManagementViewModel.PerformanceWithRate
+            oldItem: PerformanceWithRate,
+            newItem: PerformanceWithRate
         ): Boolean {
             return oldItem.performance.id == newItem.performance.id
         }
 
         override fun areContentsTheSame(
-            oldItem: ManagementViewModel.PerformanceWithRate,
-            newItem: ManagementViewModel.PerformanceWithRate
+            oldItem: PerformanceWithRate,
+            newItem: PerformanceWithRate
         ): Boolean {
             return oldItem == newItem
         }

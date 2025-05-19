@@ -1,7 +1,7 @@
 package com.example.lumos.domain.entities
 
 data class EarningCreateUpdateDto(
-    val order: Int,
+    var order: Int,
     val artist: Int,
     val amount: Double,
     val paid: Boolean

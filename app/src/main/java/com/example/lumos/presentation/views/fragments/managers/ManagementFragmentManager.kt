@@ -11,19 +11,34 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.lumos.R
+import com.example.lumos.data.remote.impl.ArtistPerformanceServiceImpl
+import com.example.lumos.data.remote.impl.ArtistServiceImpl
+import com.example.lumos.data.remote.impl.EarningServiceImpl
+import com.example.lumos.data.remote.impl.OrderServiceImpl
+import com.example.lumos.data.remote.impl.PerformanceServiceImpl
+import com.example.lumos.data.repository.ArtistPerformanceRepositoryImpl
+import com.example.lumos.data.repository.ArtistRepositoryImpl
+import com.example.lumos.data.repository.EarningRepositoryImpl
+import com.example.lumos.data.repository.OrderRepositoryImpl
+import com.example.lumos.data.repository.PerformanceRepositoryImpl
 import com.example.lumos.domain.entities.Artist
 import com.example.lumos.domain.entities.Performance
+import com.example.lumos.domain.usecases.GetArtistDetailsUseCase
+import com.example.lumos.domain.usecases.GetPerformanceArtistsUseCase
+import com.example.lumos.domain.usecases.GetUnpaidArtistsUseCase
+import com.example.lumos.domain.usecases.MarkEarningsAsPaidUseCase
 import com.example.lumos.presentation.adapters.ArtistsAdapter
 import com.example.lumos.presentation.adapters.ArtistsSimpleAdapter
 import com.example.lumos.presentation.adapters.PerformancesAdapter
 import com.example.lumos.presentation.adapters.PerformancesSimpleAdapter
-import com.example.lumos.presentation.viewModels.ManagementViewModel
+import com.example.lumos.presentation.viewModels.ManagementManagerViewModel
 import com.example.lumos.presentation.adapters.UnpaidArtistsAdapter
+import com.example.lumos.presentation.viewModels.ManagementManagerViewModelFactory
 
 class ManagementFragmentManager : Fragment() {
     private lateinit var unpaidEarningsCard: CardView
     private lateinit var unpaidCountTextView: TextView
-    private lateinit var viewModel: ManagementViewModel
+    private lateinit var viewModel: ManagementManagerViewModel
 
     private lateinit var artistsCountCard: CardView
     private lateinit var artistsCountText: TextView
@@ -38,8 +53,27 @@ class ManagementFragmentManager : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_management_mangers, container, false)
 
+        val earningServiceImpl = EarningServiceImpl()
+        val earningRepositoryImpl = EarningRepositoryImpl(earningServiceImpl)
+        val orderServiceImpl = OrderServiceImpl()
+        val orderRepositoryImpl = OrderRepositoryImpl(orderServiceImpl)
+        val artistServiceImpl = ArtistServiceImpl()
+        val artistRepositoryImpl = ArtistRepositoryImpl(artistServiceImpl)
+        val artistPerformanceServiceImpl = ArtistPerformanceServiceImpl()
+        val artistPerformanceRepositoryImpl = ArtistPerformanceRepositoryImpl(artistPerformanceServiceImpl, artistServiceImpl)
+        val performanceServiceImpl = PerformanceServiceImpl()
+        val performanceRepositoryImpl = PerformanceRepositoryImpl(performanceServiceImpl)
+
+        val factory = ManagementManagerViewModelFactory(
+            GetUnpaidArtistsUseCase(earningRepositoryImpl, orderRepositoryImpl, artistRepositoryImpl),
+            MarkEarningsAsPaidUseCase(artistRepositoryImpl, earningRepositoryImpl),
+            GetArtistDetailsUseCase(artistRepositoryImpl, artistPerformanceRepositoryImpl, performanceRepositoryImpl),
+            GetPerformanceArtistsUseCase(artistPerformanceRepositoryImpl,artistRepositoryImpl),
+            artistRepositoryImpl,
+            performanceRepositoryImpl
+        )
         // Инициализация ViewModel
-        viewModel = ViewModelProvider(this).get(ManagementViewModel::class.java)
+        viewModel = ViewModelProvider(this, factory).get(ManagementManagerViewModel::class.java)
 
         // Находим элементы интерфейса
         unpaidEarningsCard = view.findViewById(R.id.unpaid_earnings_card)
@@ -228,7 +262,7 @@ class ManagementFragmentManager : Fragment() {
         artistsRecycler.adapter = artistsAdapter
 
         // Загружаем артистов для этого номера
-        viewModel.loadArtistsForPerformance(performance)
+        viewModel.loadArtistsForPerformance(performance.id)
 
         viewModel.performanceArtists.observe(viewLifecycleOwner) { artists ->
             if (artists.isEmpty()) {

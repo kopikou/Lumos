@@ -22,6 +22,7 @@
             android:id="@+id/tvDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
             android:textColor="@color/black"
             android:textSize="16sp"/>
     </LinearLayout>
@@ -43,6 +44,7 @@
             android:id="@+id/tvPerformance"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
             android:textColor="@color/black"
             android:textSize="16sp"/>
     </LinearLayout>
@@ -64,6 +66,7 @@
             android:id="@+id/tvLocation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
             android:textColor="@color/black"
             android:textSize="16sp"/>
     </LinearLayout>
@@ -85,6 +88,7 @@
             android:id="@+id/tvAmount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
             android:textColor="@color/primaryColor"
             android:textSize="16sp"/>
     </LinearLayout>
@@ -121,6 +125,7 @@
             android:id="@+id/tvCompletionStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
             android:textSize="16sp"/>
     </LinearLayout>
 
@@ -141,6 +146,7 @@
             android:id="@+id/tvPaymentStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
             android:textSize="16sp"/>
     </LinearLayout>
 

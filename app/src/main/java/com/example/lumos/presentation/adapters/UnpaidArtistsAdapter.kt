@@ -9,11 +9,11 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.lumos.R
-import com.example.lumos.presentation.viewModels.ManagementViewModel
+import com.example.lumos.domain.usecases.ArtistWithUnpaid
 
 class UnpaidArtistsAdapter(
-    private val onMarkPaid: (ManagementViewModel.ArtistWithUnpaid) -> Unit
-) : ListAdapter<ManagementViewModel.ArtistWithUnpaid, UnpaidArtistsAdapter.ArtistViewHolder>(
+    private val onMarkPaid: (ArtistWithUnpaid) -> Unit
+) : ListAdapter<ArtistWithUnpaid, UnpaidArtistsAdapter.ArtistViewHolder>(
     ArtistDiffCallback()
 ) {
 
@@ -33,7 +33,7 @@ class UnpaidArtistsAdapter(
         private val balanceTextView: TextView = itemView.findViewById(R.id.artist_balance)
         private val markPaidButton: Button = itemView.findViewById(R.id.mark_paid_button)
 
-        fun bind(artistWithUnpaid: ManagementViewModel.ArtistWithUnpaid) {
+        fun bind(artistWithUnpaid: ArtistWithUnpaid) {
             nameTextView.text = "${artistWithUnpaid.artist.firstName} ${artistWithUnpaid.artist.lastName}"
             balanceTextView.text = "Невыплачено: ${artistWithUnpaid.unpaidAmount} руб. (${artistWithUnpaid.unpaidEarnings.size} заказов)"
 
@@ -43,17 +43,17 @@ class UnpaidArtistsAdapter(
         }
     }
 
-    class ArtistDiffCallback : DiffUtil.ItemCallback<ManagementViewModel.ArtistWithUnpaid>() {
+    class ArtistDiffCallback : DiffUtil.ItemCallback<ArtistWithUnpaid>() {
         override fun areItemsTheSame(
-            oldItem: ManagementViewModel.ArtistWithUnpaid,
-            newItem: ManagementViewModel.ArtistWithUnpaid
+            oldItem: ArtistWithUnpaid,
+            newItem: ArtistWithUnpaid
         ): Boolean {
             return oldItem.artist.id == newItem.artist.id
         }
 
         override fun areContentsTheSame(
-            oldItem: ManagementViewModel.ArtistWithUnpaid,
-            newItem: ManagementViewModel.ArtistWithUnpaid
+            oldItem: ArtistWithUnpaid,
+            newItem: ArtistWithUnpaid
         ): Boolean {
             return oldItem == newItem
         }

@@ -7,7 +7,7 @@ class DeleteOrderUseCase(
     private val orderRepository: OrderRepositoryImpl,
     private val earningRepository: EarningRepositoryImpl
 ) {
-    suspend operator fun invoke(orderId: Int): Result<Unit> {
+    suspend operator fun invoke(orderId: Int): Boolean {
         return try {
             // Delete related earnings first
             //earningRepository.deleteEarningsByOrder(orderId)
@@ -15,9 +15,9 @@ class DeleteOrderUseCase(
             // Then delete the order
             orderRepository.deleteOrder(orderId)
 
-            Result.success(Unit)
+            true//Result.success(Unit)
         } catch (e: Exception) {
-            Result.failure(e)
+            false//Result.failure(e)
         }
     }
 }

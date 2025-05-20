@@ -8,7 +8,6 @@ import com.example.lumos.domain.repositories.ArtistPerformanceRepository
 
 class ArtistPerformanceRepositoryImpl (
     private val artistPerformanceService: ArtistPerformanceServiceImpl,
-    private val artistService: ArtistServiceImpl
 ) : ArtistPerformanceRepository {
     override suspend fun getArtistPerformances(): List<ArtistPerformance> {
         return artistPerformanceService.getArtistPerformances()

@@ -3,25 +3,31 @@ package com.example.lumos.presentation.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.lumos.R
 import com.example.lumos.domain.entities.Order
+import java.text.SimpleDateFormat
+import java.util.Locale
 
-class OrderArtistsAdapter(
-    private val onItemClick: (Order) -> Unit
-) : RecyclerView.Adapter<OrderArtistsAdapter.OrderViewHolder>() {
+class OrderManagerAdapter (
+    private val onItemClick: (Order) -> Unit,
+    private val onDeleteClick: (Order) -> Unit
+) : RecyclerView.Adapter<OrderManagerAdapter.OrderViewHolder>() {
 
-    private val orders = mutableListOf<Order>()
+    //private var orders: List<Order> = emptyList()
+    private var orders = mutableListOf<Order>()
 
     inner class OrderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val date: TextView = itemView.findViewById(R.id.orderDate)
         val performance: TextView = itemView.findViewById(R.id.orderPerformance)
+        val deleteButton: ImageButton = itemView.findViewById(R.id.deleteButton)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OrderViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_order, parent, false)
+            .inflate(R.layout.item_order_manager, parent, false)
         return OrderViewHolder(view)
     }
 
@@ -33,9 +39,11 @@ class OrderArtistsAdapter(
         holder.itemView.setOnClickListener {
             onItemClick(order)
         }
-    }
 
-    override fun getItemCount() = orders.size
+        holder.deleteButton.setOnClickListener {
+            onDeleteClick(order)
+        }
+    }
 
     fun updateOrders(newOrders: List<Order>) {
         orders.clear()
@@ -43,8 +51,8 @@ class OrderArtistsAdapter(
         notifyDataSetChanged()
     }
 
-    fun updateOrderStatus(orderId: Int, isCompleted: Boolean) {
-        orders.find { it.id == orderId }?.completed = isCompleted
-        notifyDataSetChanged()
-    }
+    override fun getItemCount() = orders.size
+
+
+
 }

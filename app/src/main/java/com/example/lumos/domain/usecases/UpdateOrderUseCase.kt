@@ -1,9 +1,11 @@
 package com.example.lumos.domain.usecases
 
+import com.example.lumos.data.remote.impl.PerformanceServiceImpl
 import com.example.lumos.data.repository.ArtistPerformanceRepositoryImpl
 import com.example.lumos.data.repository.ArtistRepositoryImpl
 import com.example.lumos.data.repository.EarningRepositoryImpl
 import com.example.lumos.data.repository.OrderRepositoryImpl
+import com.example.lumos.data.repository.PerformanceRepositoryImpl
 import com.example.lumos.domain.entities.Artist
 import com.example.lumos.domain.entities.EarningCreateUpdateDto
 import com.example.lumos.domain.entities.OrderCreateUpdateDto
@@ -70,6 +72,101 @@ import com.example.lumos.domain.entities.Performance
 //
 //    }
 //}
+//class UpdateOrderUseCase(
+//    private val orderRepository: OrderRepositoryImpl,
+//    private val earningRepository: EarningRepositoryImpl,
+//    private val artistPerformanceRepository: ArtistPerformanceRepositoryImpl,
+//    private val artistRepository: ArtistRepositoryImpl
+//) {
+//    suspend operator fun invoke(
+//        orderId: Int,
+//        date: String,
+//        location: String,
+//        performance: Performance,
+//        amount: Double,
+//        comment: String,
+//        isCompleted: Boolean,
+//        selectedArtists: List<Artist>
+//    ): Result<Unit> {
+//        return try {
+//            // 1. Update order
+//            val orderDto = OrderCreateUpdateDto(
+//                date = date,
+//                location = location,
+//                performance = performance.id,
+//                amount = amount,
+//                comment = comment,
+//                completed = isCompleted
+//            )
+//
+//            orderRepository.updateOrder(orderId, orderDto)
+//
+//            // 2. Handle earnings
+//            val currentEarnings = earningRepository.getEarnings().filter { it.order.id == orderId }
+//
+//            // Check if performance or artists changed
+//            val performanceChanged = currentEarnings.any {
+//                it.order.performance.id != performance.id
+//            }
+//
+//            val artistsChanged = currentEarnings.map { it.artist.id }.sorted() !=
+//                    selectedArtists.map { it.id }.sorted()
+//
+//            if (performanceChanged || artistsChanged) {
+//                // Remove old earnings
+//                currentEarnings.forEach { earning ->
+//                    earningRepository.deleteEarning(earning.id)
+//                }
+//
+//                // Create new earnings
+//                selectedArtists.forEach { artist ->
+//                    val artistPerformance = artistPerformanceRepository.getArtistPerformances()
+//                        .firstOrNull { it.artist.id == artist.id && it.performance.id == performance.id }
+//
+//                    artistPerformance?.let {
+//                        val earningDto = EarningCreateUpdateDto(
+//                            order = orderId,
+//                            artist = artist.id,
+//                            amount = it.rate.rate,
+//                            paid = false
+//                        )
+//                        earningRepository.createEarning(earningDto)
+//                    }
+//                }
+//            }
+//
+//            // 3. Handle completion
+//            if (isCompleted) {
+//                selectedArtists.forEach { artist ->
+//                    val earning = earningRepository.getEarnings()
+//                        .firstOrNull { it.order.id == orderId && it.artist.id == artist.id }
+//
+//                    earning?.takeIf { !it.paid }?.let {
+//                        // Update artist balance
+//                        val updatedArtist = artist.copy(balance = artist.balance + it.amount)
+//                        artistRepository.updateArtist(artist.id, updatedArtist)
+//
+//                        // Mark earning as paid
+//                        earningRepository.updateEarning(
+//                            it.id,
+//                            EarningCreateUpdateDto(
+//                                order = orderId,
+//                                artist = artist.id,
+//                                amount = it.amount,
+//                                paid = true
+//                            )
+//                        )
+//                    }
+//                }
+//            }
+//
+//            Result.success(Unit)
+//        } catch (e: Exception) {
+//            Result.failure(e)
+//        }
+//    }
+//}
+
 class UpdateOrderUseCase(
     private val orderRepository: OrderRepositoryImpl,
     private val earningRepository: EarningRepositoryImpl,
@@ -79,88 +176,75 @@ class UpdateOrderUseCase(
     suspend operator fun invoke(
         orderId: Int,
         date: String,
+        performanceId: Int,
         location: String,
-        performance: Performance,
         amount: Double,
         comment: String,
         isCompleted: Boolean,
-        selectedArtists: List<Artist>
-    ): Result<Unit> {
-        return try {
-            // 1. Update order
-            val orderDto = OrderCreateUpdateDto(
+        artistIds: List<Int>
+    ): Boolean {
+        val performanceRepositoryImpl = PerformanceRepositoryImpl(PerformanceServiceImpl())
+        val performance = performanceRepositoryImpl.getPerformanceById(performanceId)
+        try {
+            // 1. Обновляем заказ
+            val order = orderRepository.getOrderById(orderId)
+            val updatedOrder = order.copy(
                 date = date,
                 location = location,
-                performance = performance.id,
+                performance = performance,//Performance(id = performanceId, title = "", cost = 0.0, cntArtists = 0),
                 amount = amount,
                 comment = comment,
                 completed = isCompleted
             )
+            orderRepository.updateOrder(orderId, OrderCreateUpdateDto.fromOrder(updatedOrder))
 
-            orderRepository.updateOrder(orderId, orderDto)
-
-            // 2. Handle earnings
+            // 2. Если изменился номер или артисты, обновляем записи о заработке
             val currentEarnings = earningRepository.getEarnings().filter { it.order.id == orderId }
-
-            // Check if performance or artists changed
-            val performanceChanged = currentEarnings.any {
-                it.order.performance.id != performance.id
-            }
-
-            val artistsChanged = currentEarnings.map { it.artist.id }.sorted() !=
-                    selectedArtists.map { it.id }.sorted()
+            val performanceChanged = order.performance.id != performanceId
+            val artistsChanged = currentEarnings.map { it.artist.id } != artistIds
 
             if (performanceChanged || artistsChanged) {
-                // Remove old earnings
+                // Удаляем старые записи
                 currentEarnings.forEach { earning ->
                     earningRepository.deleteEarning(earning.id)
                 }
 
-                // Create new earnings
-                selectedArtists.forEach { artist ->
+                // Создаем новые
+                artistIds.forEach { artistId ->
                     val artistPerformance = artistPerformanceRepository.getArtistPerformances()
-                        .firstOrNull { it.artist.id == artist.id && it.performance.id == performance.id }
+                        .firstOrNull { it.artist.id == artistId && it.performance.id == performanceId }
 
                     artistPerformance?.let {
-                        val earningDto = EarningCreateUpdateDto(
-                            order = orderId,
-                            artist = artist.id,
-                            amount = it.rate.rate,
-                            paid = false
-                        )
-                        earningRepository.createEarning(earningDto)
-                    }
-                }
-            }
-
-            // 3. Handle completion
-            if (isCompleted) {
-                selectedArtists.forEach { artist ->
-                    val earning = earningRepository.getEarnings()
-                        .firstOrNull { it.order.id == orderId && it.artist.id == artist.id }
-
-                    earning?.takeIf { !it.paid }?.let {
-                        // Update artist balance
-                        val updatedArtist = artist.copy(balance = artist.balance + it.amount)
-                        artistRepository.updateArtist(artist.id, updatedArtist)
-
-                        // Mark earning as paid
-                        earningRepository.updateEarning(
-                            it.id,
+                        earningRepository.createEarning(
                             EarningCreateUpdateDto(
                                 order = orderId,
-                                artist = artist.id,
-                                amount = it.amount,
-                                paid = true
+                                artist = artistId,
+                                amount = it.rate.rate,
+                                paid = false
                             )
                         )
                     }
                 }
             }
 
-            Result.success(Unit)
+            // 3. Если заказ выполнен, начисляем зарплату
+            if (isCompleted) {
+                artistIds.forEach { artistId ->
+                    val earning = earningRepository.getEarnings()
+                        .firstOrNull { it.order.id == orderId && it.artist.id == artistId }
+
+                    earning?.takeIf { !it.paid }?.let {
+                        val artist = artistRepository.getArtistById(artistId)
+                        artistRepository.updateArtist(
+                            artistId,
+                            artist.copy(balance = artist.balance + it.amount)
+                        )
+                    }
+                }
+            }
+            return true
         } catch (e: Exception) {
-            Result.failure(e)
+            return false
         }
     }
 }

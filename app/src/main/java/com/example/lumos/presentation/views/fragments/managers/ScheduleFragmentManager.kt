@@ -46,6 +46,7 @@ import com.example.lumos.domain.usecases.GetArtistsUseCase
 import com.example.lumos.domain.usecases.GetOrdersUseCase
 import com.example.lumos.domain.usecases.GetPerformancesUseCase
 import com.example.lumos.domain.usecases.UpdateOrderUseCase
+import com.example.lumos.presentation.adapters.OrderManagerAdapter
 import com.example.lumos.presentation.viewModels.ScheduleManagerViewModel
 import com.example.lumos.presentation.viewModels.ScheduleManagerViewModelFactory
 import com.google.android.material.textfield.TextInputEditText
@@ -874,267 +875,151 @@ import java.util.Locale
 
 
 
-class ScheduleFragmentManager : Fragment() {
-    private lateinit var binding: FragmentScheduleManagersBinding
-    private lateinit var viewModel: ScheduleManagerViewModel
-    private lateinit var adapter: OrderAdapter
-    private lateinit var emptyView: TextView
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = FragmentScheduleManagersBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        setupViews()
-        setupRecyclerView()
-        setupObservers()
-        setupListeners()
-
-        val orderRepositoryImpl = OrderRepositoryImpl(OrderServiceImpl())
-        val artistRepositoryImpl = ArtistRepositoryImpl(ArtistServiceImpl())
-        val earningRepositoryImpl = EarningRepositoryImpl(EarningServiceImpl())
-        val artistPerformanceRepositoryImpl = ArtistPerformanceRepositoryImpl(
-            ArtistPerformanceServiceImpl(), ArtistServiceImpl()
-        )
-        val performanceRepositoryImpl = PerformanceRepositoryImpl(PerformanceServiceImpl())
-
-        val getOrdersUseCase = GetOrdersUseCase(orderRepositoryImpl)
-        val createOrderUseCase = CreateOrderUseCase(orderRepositoryImpl,earningRepositoryImpl,artistPerformanceRepositoryImpl)
-        val updateOrderUseCase = UpdateOrderUseCase(orderRepositoryImpl,earningRepositoryImpl,artistPerformanceRepositoryImpl,artistRepositoryImpl)
-        val deleteOrderUseCase = DeleteOrderUseCase(orderRepositoryImpl,earningRepositoryImpl)
-        val getPerformancesUseCase = GetPerformancesUseCase(performanceRepositoryImpl)
-        val getArtistsUseCase = GetArtistsUseCase(artistRepositoryImpl)
-        val getArtistPerformancesUseCase = GetArtistPerformancesUseCase(artistPerformanceRepositoryImpl)
-        val getArtistsForOrderUseCase = GetArtistsForOrderUseCase(earningRepositoryImpl,artistRepositoryImpl)
-
-        val factory = ScheduleManagerViewModelFactory(
-            getOrdersUseCase,
-            createOrderUseCase,
-            updateOrderUseCase,
-            deleteOrderUseCase,
-            getPerformancesUseCase,
-            getArtistsUseCase,
-            getArtistPerformancesUseCase,
-            getArtistsForOrderUseCase
-        )
-
-        viewModel = ViewModelProvider(this, factory).get(ScheduleManagerViewModel::class.java)
-
-        viewModel.loadData()
-    }
-
-    private fun setupViews() {
-        emptyView = binding.emptyView
-        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
-    }
-
-    private fun setupRecyclerView() {
-        adapter = OrderAdapter(
-            onItemClick = { order -> showOrderDetailsDialog(order) },
-            onDeleteClick = { order -> showDeleteConfirmationDialog(order) }
-        )
-        binding.recyclerView.adapter = adapter
-    }
-
-    private fun setupObservers() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.uiState.collect { state ->
-                    when (state) {
-                        is ScheduleManagerViewModel.ScheduleUiState.Loading -> showLoading(true)
-                        is ScheduleManagerViewModel.ScheduleUiState.Empty -> showEmptyState()
-                        is ScheduleManagerViewModel.ScheduleUiState.Success -> showOrders(state.orders)
-                        is ScheduleManagerViewModel.ScheduleUiState.Error -> showError(state.message)
-                    }
-                }
-            }
-        }
-    }
-
-    private fun setupListeners() {
-        binding.fabAddOrder.setOnClickListener {
-            showCreateOrderDialog()
-        }
-    }
-
-    private fun showLoading(show: Boolean) {
-        //binding.progressBar.visibility = if (show) View.VISIBLE else View.GONE
-    }
-
-    private fun showEmptyState() {
-        showLoading(false)
-        emptyView.visibility = View.VISIBLE
-        binding.recyclerView.visibility = View.GONE
-    }
-
-    private fun showOrders(orders: List<Order>) {
-        showLoading(false)
-        emptyView.visibility = View.GONE
-        binding.recyclerView.visibility = View.VISIBLE
-        adapter.submitList(orders)
-    }
-
-    private fun showError(message: String) {
-        showLoading(false)
-        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
-    }
-
-    private fun showCreateOrderDialog() {
-        val performances = viewModel.performances.value
-        val artistPerformances = viewModel.artistPerformances.value
-        val artists = viewModel.artists.value
-
-        val dialogView = LayoutInflater.from(requireContext())
-            .inflate(R.layout.dialog_create_order, null)
-
-        val tilDate = dialogView.findViewById<TextInputLayout>(R.id.tilDate)
-        val etDate = dialogView.findViewById<TextInputEditText>(R.id.etDate)
-        val spinnerPerformance = dialogView.findViewById<Spinner>(R.id.spinnerPerformance)
-        val tilLocation = dialogView.findViewById<TextInputLayout>(R.id.tilLocation)
-        val etLocation = dialogView.findViewById<TextInputEditText>(R.id.etLocation)
-        val tilAmount = dialogView.findViewById<TextInputLayout>(R.id.tilAmount)
-        val etAmount = dialogView.findViewById<TextInputEditText>(R.id.etAmount)
-        val tilComment = dialogView.findViewById<TextInputLayout>(R.id.tilComment)
-        val etComment = dialogView.findViewById<TextInputEditText>(R.id.etComment)
-        val artistsContainer = dialogView.findViewById<LinearLayout>(R.id.artistsContainer)
-
-        // Date picker setup
-        etDate.setOnClickListener {
-            showDatePicker { date -> etDate.setText(date) }
-        }
-
-        // Performance spinner setup
-        val performanceAdapter = ArrayAdapter(
-            requireContext(),
-            android.R.layout.simple_spinner_item,
-            listOf("Выберите номер") + performances.map { it.title }
-        ).apply {
-            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        }
-        spinnerPerformance.adapter = performanceAdapter
-
-        spinnerPerformance.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                if (position > 0) {
-                    val selectedPerformance = performances[position - 1]
-                    etAmount.setText(selectedPerformance.cost.toString())
-                    updateArtistsSelection(
-                        container = artistsContainer,
-                        performance = selectedPerformance,
-                        artistPerformances = artistPerformances,
-                        allArtists = artists
-                    )
-                }
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
-        }
-
-        val dialog = AlertDialog.Builder(requireContext())
-            .setTitle("Новый заказ")
-            .setView(dialogView)
-            .setPositiveButton("Создать", null)
-            .setNegativeButton("Отмена", null)
-            .create()
-
-        dialog.setOnShowListener {
-            val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
-            positiveButton.setOnClickListener {
-                if (validateOrderInputs(
-                        tilDate, etDate,
-                        tilLocation, etLocation,
-                        tilAmount, etAmount,
-                        spinnerPerformance,
-                        artistsContainer,
-                        tilComment, etComment,
-                        performances
-                    )) {
-                    val selectedPerformance = performances[spinnerPerformance.selectedItemPosition - 1]
-                    val selectedArtists = getSelectedArtists(artistsContainer, artists)
-
-                    viewModel.createOrder(
-                        date = etDate.text.toString(),
-                        location = etLocation.text.toString(),
-                        performance = selectedPerformance,
-                        amount = etAmount.text.toString().toDouble(),
-                        comment = etComment.text.toString(),
-                        selectedArtists = selectedArtists
-                    )
-
-                    dialog.dismiss()
-                }
-            }
-        }
-
-        dialog.show()
-    }
-
-    private fun showOrderDetailsDialog(order: Order) {
-        val performances = viewModel.performances.value
-        val artistPerformances = viewModel.artistPerformances.value
-        val artists = viewModel.artists.value
-
-        val dialogView = LayoutInflater.from(requireContext())
-            .inflate(R.layout.dialog_edit_order_details, null)
-
-        val tilDate = dialogView.findViewById<TextInputLayout>(R.id.tilDate)
-        val etDate = dialogView.findViewById<TextInputEditText>(R.id.etDate)
-        val spinnerPerformance = dialogView.findViewById<Spinner>(R.id.spinnerPerformance)
-        val tilLocation = dialogView.findViewById<TextInputLayout>(R.id.tilLocation)
-        val etLocation = dialogView.findViewById<TextInputEditText>(R.id.etLocation)
-        val tilAmount = dialogView.findViewById<TextInputLayout>(R.id.tilAmount)
-        val etAmount = dialogView.findViewById<TextInputEditText>(R.id.etAmount)
-        val tilComment = dialogView.findViewById<TextInputLayout>(R.id.tilComment)
-        val etComment = dialogView.findViewById<TextInputEditText>(R.id.etComment)
-        val artistsContainer = dialogView.findViewById<LinearLayout>(R.id.artistsContainer)
-        val switchCompleted = dialogView.findViewById<SwitchCompat>(R.id.switchCompleted)
-
-        // Fill current data
-        etDate.setText(order.date)
-        etLocation.setText(order.location)
-        etAmount.setText(order.amount.toString())
-        etComment.setText(order.comment)
-        switchCompleted.isChecked = order.completed
-
-        // Date picker setup
-        etDate.setOnClickListener {
-            showDatePicker { date -> etDate.setText(date) }
-        }
-
-        // Performance spinner setup
-        val performanceAdapter = ArrayAdapter(
-            requireContext(),
-            android.R.layout.simple_spinner_item,
-            listOf("Выберите номер") + performances.map { it.title }
-        ).apply {
-            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        }
-        spinnerPerformance.adapter = performanceAdapter
-
-        // Select current performance
-        val currentPerformanceIndex = performances.indexOfFirst { it.id == order.performance.id }
-        if (currentPerformanceIndex >= 0) {
-            spinnerPerformance.setSelection(currentPerformanceIndex + 1)
-        }
-
-//        // Get current artists for this order
-//        val currentArtists = viewModel.getArtistsForOrder(order.id)
+//class ScheduleFragmentManager : Fragment() {
+//    private lateinit var binding: FragmentScheduleManagersBinding
+//    private lateinit var viewModel: ScheduleManagerViewModel
+//    private lateinit var adapter: OrderAdapter
+//    private lateinit var emptyView: TextView
 //
-//        // Setup artists selection
-//        updateArtistsSelection(
-//            container = artistsContainer,
-//            performance = order.performance,
-//            artistPerformances = artistPerformances,
-//            allArtists = artists,
-//            selectedArtists = currentArtists
+//    override fun onCreateView(
+//        inflater: LayoutInflater,
+//        container: ViewGroup?,
+//        savedInstanceState: Bundle?
+//    ): View {
+//        binding = FragmentScheduleManagersBinding.inflate(inflater, container, false)
+//        return binding.root
+//    }
+//
+//    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+//        super.onViewCreated(view, savedInstanceState)
+//
+//        setupViews()
+//        setupRecyclerView()
+//        setupObservers()
+//        setupListeners()
+//
+//        val orderRepositoryImpl = OrderRepositoryImpl(OrderServiceImpl())
+//        val artistRepositoryImpl = ArtistRepositoryImpl(ArtistServiceImpl())
+//        val earningRepositoryImpl = EarningRepositoryImpl(EarningServiceImpl())
+//        val artistPerformanceRepositoryImpl = ArtistPerformanceRepositoryImpl(
+//            ArtistPerformanceServiceImpl(), ArtistServiceImpl()
 //        )
+//        val performanceRepositoryImpl = PerformanceRepositoryImpl(PerformanceServiceImpl())
+//
+//        val getOrdersUseCase = GetOrdersUseCase(orderRepositoryImpl)
+//        val createOrderUseCase = CreateOrderUseCase(orderRepositoryImpl,earningRepositoryImpl,artistPerformanceRepositoryImpl)
+//        val updateOrderUseCase = UpdateOrderUseCase(orderRepositoryImpl,earningRepositoryImpl,artistPerformanceRepositoryImpl,artistRepositoryImpl)
+//        val deleteOrderUseCase = DeleteOrderUseCase(orderRepositoryImpl,earningRepositoryImpl)
+//        val getPerformancesUseCase = GetPerformancesUseCase(performanceRepositoryImpl)
+//        val getArtistsUseCase = GetArtistsUseCase(artistRepositoryImpl)
+//        val getArtistPerformancesUseCase = GetArtistPerformancesUseCase(artistPerformanceRepositoryImpl)
+//        val getArtistsForOrderUseCase = GetArtistsForOrderUseCase(earningRepositoryImpl,artistRepositoryImpl)
+//
+//        val factory = ScheduleManagerViewModelFactory(
+//            getOrdersUseCase,
+//            createOrderUseCase,
+//            updateOrderUseCase,
+//            deleteOrderUseCase,
+//            getPerformancesUseCase,
+//            getArtistsUseCase,
+//            getArtistPerformancesUseCase,
+//            getArtistsForOrderUseCase
+//        )
+//
+//        viewModel = ViewModelProvider(this, factory).get(ScheduleManagerViewModel::class.java)
+//
+//        viewModel.loadData()
+//    }
+//
+//    private fun setupViews() {
+//        emptyView = binding.emptyView
+//        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
+//    }
+//
+//    private fun setupRecyclerView() {
+//        adapter = OrderAdapter(
+//            onItemClick = { order -> showOrderDetailsDialog(order) },
+//            onDeleteClick = { order -> showDeleteConfirmationDialog(order) }
+//        )
+//        binding.recyclerView.adapter = adapter
+//    }
+//
+//    private fun setupObservers() {
+//        viewLifecycleOwner.lifecycleScope.launch {
+//            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+//                viewModel.uiState.collect { state ->
+//                    when (state) {
+//                        is ScheduleManagerViewModel.ScheduleUiState.Loading -> showLoading(true)
+//                        is ScheduleManagerViewModel.ScheduleUiState.Empty -> showEmptyState()
+//                        is ScheduleManagerViewModel.ScheduleUiState.Success -> showOrders(state.orders)
+//                        is ScheduleManagerViewModel.ScheduleUiState.Error -> showError(state.message)
+//                    }
+//                }
+//            }
+//        }
+//    }
+//
+//    private fun setupListeners() {
+//        binding.fabAddOrder.setOnClickListener {
+//            showCreateOrderDialog()
+//        }
+//    }
+//
+//    private fun showLoading(show: Boolean) {
+//        //binding.progressBar.visibility = if (show) View.VISIBLE else View.GONE
+//    }
+//
+//    private fun showEmptyState() {
+//        showLoading(false)
+//        emptyView.visibility = View.VISIBLE
+//        binding.recyclerView.visibility = View.GONE
+//    }
+//
+//    private fun showOrders(orders: List<Order>) {
+//        showLoading(false)
+//        emptyView.visibility = View.GONE
+//        binding.recyclerView.visibility = View.VISIBLE
+//        adapter.submitList(orders)
+//    }
+//
+//    private fun showError(message: String) {
+//        showLoading(false)
+//        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+//    }
+//
+//    private fun showCreateOrderDialog() {
+//        val performances = viewModel.performances.value
+//        val artistPerformances = viewModel.artistPerformances.value
+//        val artists = viewModel.artists.value
+//
+//        val dialogView = LayoutInflater.from(requireContext())
+//            .inflate(R.layout.dialog_create_order, null)
+//
+//        val tilDate = dialogView.findViewById<TextInputLayout>(R.id.tilDate)
+//        val etDate = dialogView.findViewById<TextInputEditText>(R.id.etDate)
+//        val spinnerPerformance = dialogView.findViewById<Spinner>(R.id.spinnerPerformance)
+//        val tilLocation = dialogView.findViewById<TextInputLayout>(R.id.tilLocation)
+//        val etLocation = dialogView.findViewById<TextInputEditText>(R.id.etLocation)
+//        val tilAmount = dialogView.findViewById<TextInputLayout>(R.id.tilAmount)
+//        val etAmount = dialogView.findViewById<TextInputEditText>(R.id.etAmount)
+//        val tilComment = dialogView.findViewById<TextInputLayout>(R.id.tilComment)
+//        val etComment = dialogView.findViewById<TextInputEditText>(R.id.etComment)
+//        val artistsContainer = dialogView.findViewById<LinearLayout>(R.id.artistsContainer)
+//
+//        // Date picker setup
+//        etDate.setOnClickListener {
+//            showDatePicker { date -> etDate.setText(date) }
+//        }
+//
+//        // Performance spinner setup
+//        val performanceAdapter = ArrayAdapter(
+//            requireContext(),
+//            android.R.layout.simple_spinner_item,
+//            listOf("Выберите номер") + performances.map { it.title }
+//        ).apply {
+//            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+//        }
+//        spinnerPerformance.adapter = performanceAdapter
 //
 //        spinnerPerformance.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
 //            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
@@ -1145,8 +1030,7 @@ class ScheduleFragmentManager : Fragment() {
 //                        container = artistsContainer,
 //                        performance = selectedPerformance,
 //                        artistPerformances = artistPerformances,
-//                        allArtists = artists,
-//                        selectedArtists = currentArtists
+//                        allArtists = artists
 //                    )
 //                }
 //            }
@@ -1155,9 +1039,9 @@ class ScheduleFragmentManager : Fragment() {
 //        }
 //
 //        val dialog = AlertDialog.Builder(requireContext())
-//            .setTitle("Редактирование заказа")
+//            .setTitle("Новый заказ")
 //            .setView(dialogView)
-//            .setPositiveButton("Сохранить", null)
+//            .setPositiveButton("Создать", null)
 //            .setNegativeButton("Отмена", null)
 //            .create()
 //
@@ -1176,14 +1060,12 @@ class ScheduleFragmentManager : Fragment() {
 //                    val selectedPerformance = performances[spinnerPerformance.selectedItemPosition - 1]
 //                    val selectedArtists = getSelectedArtists(artistsContainer, artists)
 //
-//                    viewModel.updateOrder(
-//                        orderId = order.id,
+//                    viewModel.createOrder(
 //                        date = etDate.text.toString(),
 //                        location = etLocation.text.toString(),
 //                        performance = selectedPerformance,
 //                        amount = etAmount.text.toString().toDouble(),
 //                        comment = etComment.text.toString(),
-//                        isCompleted = switchCompleted.isChecked,
 //                        selectedArtists = selectedArtists
 //                    )
 //
@@ -1193,64 +1075,708 @@ class ScheduleFragmentManager : Fragment() {
 //        }
 //
 //        dialog.show()
-        // Запускаем корутину для получения артистов
+//    }
+//
+//    private fun showOrderDetailsDialog(order: Order) {
+//        val performances = viewModel.performances.value
+//        val artistPerformances = viewModel.artistPerformances.value
+//        val artists = viewModel.artists.value
+//
+//        val dialogView = LayoutInflater.from(requireContext())
+//            .inflate(R.layout.dialog_edit_order_details, null)
+//
+//        val tilDate = dialogView.findViewById<TextInputLayout>(R.id.tilDate)
+//        val etDate = dialogView.findViewById<TextInputEditText>(R.id.etDate)
+//        val spinnerPerformance = dialogView.findViewById<Spinner>(R.id.spinnerPerformance)
+//        val tilLocation = dialogView.findViewById<TextInputLayout>(R.id.tilLocation)
+//        val etLocation = dialogView.findViewById<TextInputEditText>(R.id.etLocation)
+//        val tilAmount = dialogView.findViewById<TextInputLayout>(R.id.tilAmount)
+//        val etAmount = dialogView.findViewById<TextInputEditText>(R.id.etAmount)
+//        val tilComment = dialogView.findViewById<TextInputLayout>(R.id.tilComment)
+//        val etComment = dialogView.findViewById<TextInputEditText>(R.id.etComment)
+//        val artistsContainer = dialogView.findViewById<LinearLayout>(R.id.artistsContainer)
+//        val switchCompleted = dialogView.findViewById<SwitchCompat>(R.id.switchCompleted)
+//
+//        // Fill current data
+//        etDate.setText(order.date)
+//        etLocation.setText(order.location)
+//        etAmount.setText(order.amount.toString())
+//        etComment.setText(order.comment)
+//        switchCompleted.isChecked = order.completed
+//
+//        // Date picker setup
+//        etDate.setOnClickListener {
+//            showDatePicker { date -> etDate.setText(date) }
+//        }
+//
+//        // Performance spinner setup
+//        val performanceAdapter = ArrayAdapter(
+//            requireContext(),
+//            android.R.layout.simple_spinner_item,
+//            listOf("Выберите номер") + performances.map { it.title }
+//        ).apply {
+//            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+//        }
+//        spinnerPerformance.adapter = performanceAdapter
+//
+//        // Select current performance
+//        val currentPerformanceIndex = performances.indexOfFirst { it.id == order.performance.id }
+//        if (currentPerformanceIndex >= 0) {
+//            spinnerPerformance.setSelection(currentPerformanceIndex + 1)
+//        }
+//
+////        // Get current artists for this order
+////        val currentArtists = viewModel.getArtistsForOrder(order.id)
+////
+////        // Setup artists selection
+////        updateArtistsSelection(
+////            container = artistsContainer,
+////            performance = order.performance,
+////            artistPerformances = artistPerformances,
+////            allArtists = artists,
+////            selectedArtists = currentArtists
+////        )
+////
+////        spinnerPerformance.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+////            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+////                if (position > 0) {
+////                    val selectedPerformance = performances[position - 1]
+////                    etAmount.setText(selectedPerformance.cost.toString())
+////                    updateArtistsSelection(
+////                        container = artistsContainer,
+////                        performance = selectedPerformance,
+////                        artistPerformances = artistPerformances,
+////                        allArtists = artists,
+////                        selectedArtists = currentArtists
+////                    )
+////                }
+////            }
+////
+////            override fun onNothingSelected(parent: AdapterView<*>?) {}
+////        }
+////
+////        val dialog = AlertDialog.Builder(requireContext())
+////            .setTitle("Редактирование заказа")
+////            .setView(dialogView)
+////            .setPositiveButton("Сохранить", null)
+////            .setNegativeButton("Отмена", null)
+////            .create()
+////
+////        dialog.setOnShowListener {
+////            val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+////            positiveButton.setOnClickListener {
+////                if (validateOrderInputs(
+////                        tilDate, etDate,
+////                        tilLocation, etLocation,
+////                        tilAmount, etAmount,
+////                        spinnerPerformance,
+////                        artistsContainer,
+////                        tilComment, etComment,
+////                        performances
+////                    )) {
+////                    val selectedPerformance = performances[spinnerPerformance.selectedItemPosition - 1]
+////                    val selectedArtists = getSelectedArtists(artistsContainer, artists)
+////
+////                    viewModel.updateOrder(
+////                        orderId = order.id,
+////                        date = etDate.text.toString(),
+////                        location = etLocation.text.toString(),
+////                        performance = selectedPerformance,
+////                        amount = etAmount.text.toString().toDouble(),
+////                        comment = etComment.text.toString(),
+////                        isCompleted = switchCompleted.isChecked,
+////                        selectedArtists = selectedArtists
+////                    )
+////
+////                    dialog.dismiss()
+////                }
+////            }
+////        }
+////
+////        dialog.show()
+//        // Запускаем корутину для получения артистов
+//        viewLifecycleOwner.lifecycleScope.launch {
+//            try {
+//                val currentArtists = viewModel.getArtistsForOrder(order.id)
+//
+//                // Обновляем UI после получения данных
+//                updateArtistsSelection(
+//                    container = artistsContainer,
+//                    performance = order.performance,
+//                    artistPerformances = artistPerformances,
+//                    allArtists = artists,
+//                    selectedArtists = currentArtists
+//                )
+//
+//                // Продолжаем настройку диалога
+//                val dialog = AlertDialog.Builder(requireContext())
+//                    .setTitle("Редактирование заказа")
+//                    .setView(dialogView)
+//                    .setPositiveButton("Сохранить", null)
+//                    .setNegativeButton("Отмена", null)
+//                    .create()
+//
+//                dialog.setOnShowListener {
+//                    val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+//                    positiveButton.setOnClickListener {
+//                        if (validateOrderInputs(
+//                            tilDate, etDate,
+//                            tilLocation, etLocation,
+//                            tilAmount, etAmount,
+//                            spinnerPerformance,
+//                            artistsContainer,
+//                            tilComment, etComment,
+//                            performances
+//                        )) {
+//                            val selectedPerformance = performances[spinnerPerformance.selectedItemPosition - 1]
+//                            val selectedArtists = getSelectedArtists(artistsContainer, artists)
+//
+//                            viewModel.updateOrder(
+//                                orderId = order.id,
+//                                date = etDate.text.toString(),
+//                                location = etLocation.text.toString(),
+//                                performance = selectedPerformance,
+//                                amount = etAmount.text.toString().toDouble(),
+//                                comment = etComment.text.toString(),
+//                                isCompleted = switchCompleted.isChecked,
+//                                selectedArtists = selectedArtists
+//                            )
+//                            dialog.dismiss()
+//                        }
+//                    }
+//                }
+//
+//                dialog.show()
+//
+//            } catch (e: Exception) {
+//                Toast.makeText(requireContext(), "Ошибка загрузки артистов", Toast.LENGTH_SHORT).show()
+//            }
+//        }
+//    }
+//
+//    private fun showDeleteConfirmationDialog(order: Order) {
+//        AlertDialog.Builder(requireContext())
+//            .setTitle("Удаление заказа")
+//            .setMessage("Вы уверены, что хотите удалить этот заказ?")
+//            .setPositiveButton("Удалить") { _, _ ->
+//                viewModel.deleteOrder(order.id)
+//            }
+//            .setNegativeButton("Отмена", null)
+//            .show()
+//    }
+//
+//    private fun validateOrderInputs(
+//        tilDate: TextInputLayout, etDate: TextInputEditText,
+//        tilLocation: TextInputLayout, etLocation: TextInputEditText,
+//        tilAmount: TextInputLayout, etAmount: TextInputEditText,
+//        spinnerPerformance: Spinner,
+//        artistsContainer: LinearLayout,
+//        tilComment: TextInputLayout, etComment: TextInputEditText,
+//        performances: List<Performance>
+//    ): Boolean {
+//        var isValid = true
+//
+//        // Validate date
+//        if (etDate.text.isNullOrEmpty()) {
+//            tilDate.error = "Укажите дату"
+//            isValid = false
+//        } else {
+//            tilDate.error = null
+//        }
+//
+//        // Validate location
+//        if (etLocation.text.isNullOrEmpty()) {
+//            tilLocation.error = "Укажите место"
+//            isValid = false
+//        } else {
+//            tilLocation.error = null
+//        }
+//
+//        // Validate amount
+//        try {
+//            etAmount.text.toString().toDouble()
+//            tilAmount.error = null
+//        } catch (e: NumberFormatException) {
+//            tilAmount.error = "Некорректная сумма"
+//            isValid = false
+//        }
+//
+//        // Validate performance selection
+//        if (spinnerPerformance.selectedItemPosition == 0) {
+//            (spinnerPerformance.selectedView as? TextView)?.error = "Выберите номер"
+//            isValid = false
+//        } else {
+//            val selectedPerformance = performances[spinnerPerformance.selectedItemPosition - 1]
+//            val selectedArtistsCount = getSelectedArtists(artistsContainer, viewModel.artists.value).size
+//
+//            if (selectedArtistsCount != selectedPerformance.cntArtists) {
+//                Toast.makeText(
+//                    requireContext(),
+//                    "Для этого номера требуется ${selectedPerformance.cntArtists} артистов",
+//                    Toast.LENGTH_LONG
+//                ).show()
+//                isValid = false
+//            }
+//        }
+//
+//        // Validate comment
+//        if (etComment.text.isNullOrEmpty()) {
+//            tilComment.error = "Укажите комментарий"
+//            isValid = false
+//        } else {
+//            tilComment.error = null
+//        }
+//
+//        return isValid
+//    }
+//
+//    private fun updateArtistsSelection(
+//        container: LinearLayout,
+//        performance: Performance,
+//        artistPerformances: List<ArtistPerformance>,
+//        allArtists: List<Artist>,
+//        selectedArtists: List<Artist> = emptyList()
+//    ) {
+//        container.removeAllViews()
+//
+//        // Get artists for this performance
+//        val artistsForPerformance = artistPerformances
+//            .filter { it.performance.id == performance.id }
+//            .map { it.artist }
+//
+//        // Create checkboxes for artist selection
+//        artistsForPerformance.forEach { artist ->
+//            CheckBox(requireContext()).apply {
+//                text = "${artist.firstName} ${artist.lastName}"
+//                tag = artist.id
+//                isChecked = selectedArtists.any { it.id == artist.id }
+//                container.addView(this)
+//            }
+//        }
+//
+//        // Check if we have enough artists
+//        if (artistsForPerformance.size < performance.cntArtists) {
+//            Toast.makeText(
+//                requireContext(),
+//                "Внимание: для этого номера требуется ${performance.cntArtists} артистов, а доступно только ${artistsForPerformance.size}",
+//                Toast.LENGTH_LONG
+//            ).show()
+//        }
+//    }
+//
+//    private fun getSelectedArtists(container: LinearLayout, allArtists: List<Artist>): List<Artist> {
+//        val selectedArtists = mutableListOf<Artist>()
+//        for (i in 0 until container.childCount) {
+//            val view = container.getChildAt(i)
+//            if (view is CheckBox && view.isChecked) {
+//                allArtists.firstOrNull { it.id == view.tag as Int }?.let {
+//                    selectedArtists.add(it)
+//                }
+//            }
+//        }
+//        return selectedArtists
+//    }
+//
+//    private fun showDatePicker(onDateSelected: (String) -> Unit) {
+//        val calendar = Calendar.getInstance()
+//        DatePickerDialog(
+//            requireContext(),
+//            { _, year, month, day ->
+//                val formattedDate = String.format(
+//                    Locale.getDefault(),
+//                    "%04d-%02d-%02d",
+//                    year,
+//                    month + 1,
+//                    day
+//                )
+//                onDateSelected(formattedDate)
+//            },
+//            calendar.get(Calendar.YEAR),
+//            calendar.get(Calendar.MONTH),
+//            calendar.get(Calendar.DAY_OF_MONTH)
+//        ).show()
+//    }
+//
+//    private inner class OrderAdapter(
+//        private val onItemClick: (Order) -> Unit,
+//        private val onDeleteClick: (Order) -> Unit
+//    ) : RecyclerView.Adapter<OrderAdapter.OrderViewHolder>() {
+//
+//        private var orders: List<Order> = emptyList()
+//
+//        inner class OrderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+//            val date: TextView = itemView.findViewById(R.id.orderDate)
+//            val performance: TextView = itemView.findViewById(R.id.orderPerformance)
+//            val deleteButton: ImageButton = itemView.findViewById(R.id.deleteButton)
+//        }
+//
+//        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OrderViewHolder {
+//            val view = LayoutInflater.from(parent.context)
+//                .inflate(R.layout.item_order_manager, parent, false)
+//            return OrderViewHolder(view)
+//        }
+//
+//        override fun onBindViewHolder(holder: OrderViewHolder, position: Int) {
+//            val order = orders[position]
+//            holder.date.text = formatDateShort(order.date)
+//            holder.performance.text = order.performance.title
+//
+//            holder.itemView.setOnClickListener {
+//                onItemClick(order)
+//            }
+//
+//            holder.deleteButton.setOnClickListener {
+//                onDeleteClick(order)
+//            }
+//        }
+//
+//        override fun getItemCount() = orders.size
+//
+//        fun submitList(newOrders: List<Order>) {
+//            orders = newOrders
+//            notifyDataSetChanged()
+//        }
+//
+//        private fun formatDateShort(dateString: String): String {
+//            return try {
+//                SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(dateString)?.let {
+//                    SimpleDateFormat("dd MMM", Locale("ru")).format(it)
+//                } ?: dateString
+//            } catch (e: Exception) {
+//                dateString
+//            }
+//        }
+//    }
+//}
+
+
+class ScheduleFragmentManager : Fragment() {
+    private lateinit var viewModel: ScheduleManagerViewModel
+    private lateinit var binding: FragmentScheduleManagersBinding
+    private lateinit var adapter: OrderManagerAdapter
+    private val performanceRepositoryImpl = PerformanceRepositoryImpl(PerformanceServiceImpl())
+    private val artistPerformanceRepository = ArtistPerformanceRepositoryImpl(ArtistPerformanceServiceImpl())
+    private val artistRepository = ArtistRepositoryImpl(ArtistServiceImpl())
+    private  val earningRepositoryImpl = EarningRepositoryImpl(EarningServiceImpl())
+    private lateinit var performances: List<Performance>
+    private lateinit var artistPerformances: List<ArtistPerformance>
+    private lateinit var allArtists: List<Artist>
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentScheduleManagersBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        setupViewModel()
+        setupRecyclerView()
+        setupObservers()
+        viewModel.loadOrders()
+
+        binding.fabAddOrder.setOnClickListener {
+            showCreateOrderDialog()
+        }
+        loadPerformancesAndArtists()
+    }
+
+    private fun setupViewModel() {
+        val orderRepository = OrderRepositoryImpl(OrderServiceImpl())
+        //val earningRepository = EarningRepositoryImpl(EarningServiceImpl())
+        //val artistPerformanceRepository = ArtistPerformanceRepositoryImpl(ArtistPerformanceServiceImpl())
+        //val artistRepository = ArtistRepositoryImpl(ArtistServiceImpl())
+
+        val getOrdersUseCase = GetOrdersUseCase(orderRepository)
+        val createOrderUseCase = CreateOrderUseCase(orderRepository, earningRepositoryImpl, artistPerformanceRepository)
+        val updateOrderUseCase = UpdateOrderUseCase(orderRepository, earningRepositoryImpl, artistPerformanceRepository, artistRepository)
+        val deleteOrderUseCase = DeleteOrderUseCase(orderRepository, earningRepositoryImpl)
+
+        viewModel = ViewModelProvider(
+            this,
+            ScheduleManagerViewModelFactory(getOrdersUseCase, createOrderUseCase, updateOrderUseCase, deleteOrderUseCase)
+        )[ScheduleManagerViewModel::class.java]
+    }
+
+    private fun setupRecyclerView() {
+        adapter = OrderManagerAdapter(
+            onItemClick = { order -> showEditOrderDialog(order) },
+            onDeleteClick = { order -> showDeleteConfirmationDialog(order) }
+        )
+        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.recyclerView.adapter = adapter
+    }
+
+    private fun setupObservers() {
+//        viewLifecycleOwner.lifecycleScope.launch {
+//            repeatOnLifecycle(Lifecycle.State.STARTED) {
+//                viewModel.uiState.collect { state ->
+//                    when (state) {
+//                        is ScheduleManagerViewModel.UiState.Loading -> {
+//                            //binding.progressBar.visibility = View.VISIBLE
+//                            binding.emptyView.visibility = View.GONE
+//                            binding.recyclerView.visibility = View.GONE
+//                        }
+//                        is ScheduleManagerViewModel.UiState.Empty -> {
+//                            //binding.progressBar.visibility = View.GONE
+//                            binding.emptyView.visibility = View.VISIBLE
+//                            binding.recyclerView.visibility = View.GONE
+//                        }
+//                        is ScheduleManagerViewModel.UiState.Success -> {
+//                            //binding.progressBar.visibility = View.GONE
+//                            binding.emptyView.visibility = View.GONE
+//                            binding.recyclerView.visibility = View.VISIBLE
+//                        }
+//                        is ScheduleManagerViewModel.UiState.Error -> {
+//                            //binding.progressBar.visibility = View.GONE
+//                            Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
+//                        }
+//                    }
+//                }
+//            }
+//        }
+
+
+
+
         viewLifecycleOwner.lifecycleScope.launch {
-            try {
-                val currentArtists = viewModel.getArtistsForOrder(order.id)
-
-                // Обновляем UI после получения данных
-                updateArtistsSelection(
-                    container = artistsContainer,
-                    performance = order.performance,
-                    artistPerformances = artistPerformances,
-                    allArtists = artists,
-                    selectedArtists = currentArtists
-                )
-
-                // Продолжаем настройку диалога
-                val dialog = AlertDialog.Builder(requireContext())
-                    .setTitle("Редактирование заказа")
-                    .setView(dialogView)
-                    .setPositiveButton("Сохранить", null)
-                    .setNegativeButton("Отмена", null)
-                    .create()
-
-                dialog.setOnShowListener {
-                    val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
-                    positiveButton.setOnClickListener {
-                        if (validateOrderInputs(
-                            tilDate, etDate,
-                            tilLocation, etLocation,
-                            tilAmount, etAmount,
-                            spinnerPerformance,
-                            artistsContainer,
-                            tilComment, etComment,
-                            performances
-                        )) {
-                            val selectedPerformance = performances[spinnerPerformance.selectedItemPosition - 1]
-                            val selectedArtists = getSelectedArtists(artistsContainer, artists)
-
-                            viewModel.updateOrder(
-                                orderId = order.id,
-                                date = etDate.text.toString(),
-                                location = etLocation.text.toString(),
-                                performance = selectedPerformance,
-                                amount = etAmount.text.toString().toDouble(),
-                                comment = etComment.text.toString(),
-                                isCompleted = switchCompleted.isChecked,
-                                selectedArtists = selectedArtists
-                            )
-                            dialog.dismiss()
-                        }
-                    }
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.orders.collect { orders ->
+                    adapter.updateOrders(orders)
                 }
-
-                dialog.show()
-
-            } catch (e: Exception) {
-                Toast.makeText(requireContext(), "Ошибка загрузки артистов", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    private fun loadPerformancesAndArtists() {
+        lifecycleScope.launch {
+            try {
+                performances = performanceRepositoryImpl.getPerformances()
+                artistPerformances = artistPerformanceRepository.getArtistPerformances()
+                allArtists = artistRepository.getArtists()
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(), "Ошибка загрузки данных", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun showCreateOrderDialog() {
+        val dialogView = LayoutInflater.from(requireContext())
+            .inflate(R.layout.dialog_create_order, null)
+
+        // Инициализация элементов UI
+        val tilDate = dialogView.findViewById<TextInputLayout>(R.id.tilDate)
+        val etDate = dialogView.findViewById<TextInputEditText>(R.id.etDate)
+        val spinnerPerformance = dialogView.findViewById<Spinner>(R.id.spinnerPerformance)
+        val tilLocation = dialogView.findViewById<TextInputLayout>(R.id.tilLocation)
+        val etLocation = dialogView.findViewById<TextInputEditText>(R.id.etLocation)
+        val tilAmount = dialogView.findViewById<TextInputLayout>(R.id.tilAmount)
+        val etAmount = dialogView.findViewById<TextInputEditText>(R.id.etAmount)
+        val tilComment = dialogView.findViewById<TextInputLayout>(R.id.tilComment)
+        val etComment = dialogView.findViewById<TextInputEditText>(R.id.etComment)
+        val artistsContainer = dialogView.findViewById<LinearLayout>(R.id.artistsContainer)
+
+        // Загрузка данных для спиннера
+        //val performanceRepositoryImpl = PerformanceRepositoryImpl(PerformanceServiceImpl())
+        //val performances = performanceRepositoryImpl.getPerformances()
+        val performanceAdapter = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_spinner_item,
+            listOf("Выберите номер") + performances.map { it.title }
+        ).apply {
+            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        }
+        spinnerPerformance.adapter = performanceAdapter
+
+        // Обработчик выбора даты
+        etDate.setOnClickListener {
+            showDatePicker { selectedDate ->
+                etDate.setText(selectedDate)
+                tilDate.error = null
+            }
+        }
+
+        // Обработчик выбора номера
+        spinnerPerformance.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                if (position > 0) {
+                    val selectedPerformance = performances[position - 1]
+                    etAmount.setText(selectedPerformance.cost.toString())
+                    updateArtistsSelection(artistsContainer, selectedPerformance)
+                } else {
+                    artistsContainer.removeAllViews()
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
+
+        // Создание диалога
+        val dialog = AlertDialog.Builder(requireContext())
+            .setTitle("Новый заказ")
+            .setView(dialogView)
+            .setPositiveButton("Создать", null)
+            .setNegativeButton("Отмена", null)
+            .create()
+
+        dialog.setOnShowListener {
+            val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+            positiveButton.setOnClickListener {
+                if (validateOrderInputs(
+                        tilDate, etDate,
+                        tilLocation, etLocation,
+                        tilAmount, etAmount,
+                        spinnerPerformance,
+                        tilComment, etComment,
+                        artistsContainer
+                    )) {
+                    val performancePosition = spinnerPerformance.selectedItemPosition
+                    val amount = etAmount.text.toString().toDouble()
+                    val selectedArtists = getSelectedArtists(artistsContainer)
+
+                    viewModel.createOrder(
+                        date = etDate.text.toString(),
+                        performanceId = performances[performancePosition - 1].id,
+                        location = etLocation.text.toString(),
+                        amount = amount,
+                        comment = etComment.text.toString(),
+                        artistIds = selectedArtists.map { it.id }
+                    ) {
+                        dialog.dismiss()
+                        Toast.makeText(requireContext(), "Заказ создан", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        }
+
+        dialog.show()
+    }
+
+    private fun showEditOrderDialog(order: Order) {
+        val dialogView = LayoutInflater.from(requireContext())
+            .inflate(R.layout.dialog_edit_order_details, null)
+
+        // Инициализация элементов UI
+        val tilDate = dialogView.findViewById<TextInputLayout>(R.id.tilDate)
+        val etDate = dialogView.findViewById<TextInputEditText>(R.id.etDate)
+        val spinnerPerformance = dialogView.findViewById<Spinner>(R.id.spinnerPerformance)
+        val tilLocation = dialogView.findViewById<TextInputLayout>(R.id.tilLocation)
+        val etLocation = dialogView.findViewById<TextInputEditText>(R.id.etLocation)
+        val tilAmount = dialogView.findViewById<TextInputLayout>(R.id.tilAmount)
+        val etAmount = dialogView.findViewById<TextInputEditText>(R.id.etAmount)
+        val tilComment = dialogView.findViewById<TextInputLayout>(R.id.tilComment)
+        val etComment = dialogView.findViewById<TextInputEditText>(R.id.etComment)
+        val artistsContainer = dialogView.findViewById<LinearLayout>(R.id.artistsContainer)
+        val switchCompleted = dialogView.findViewById<SwitchCompat>(R.id.switchCompleted)
+
+        // Заполнение текущими данными
+        etDate.setText(order.date)
+        etLocation.setText(order.location)
+        etAmount.setText(order.amount.toString())
+        etComment.setText(order.comment)
+        switchCompleted.isChecked = order.completed
+
+        // Загрузка данных для спиннера
+        val performances = performances//performanceService.getPerformances()
+        val performanceAdapter = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_spinner_item,
+            listOf("Выберите номер") + performances.map { it.title }
+        ).apply {
+            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        }
+        spinnerPerformance.adapter = performanceAdapter
+
+        // Установка текущего выбранного номера
+        val currentPerformanceIndex = performances.indexOfFirst { it.id == order.performance.id }
+        if (currentPerformanceIndex >= 0) {
+            spinnerPerformance.setSelection(currentPerformanceIndex + 1)
+        }
+        lifecycleScope.launch {
+
+            // Загрузка текущих артистов
+            val currentArtists = earningRepositoryImpl.getEarnings()
+                .filter { it.order.id == order.id }
+                .map { it.artist }
+
+            updateArtistsSelection(artistsContainer, order.performance, currentArtists)
+
+            // Обработчики
+            etDate.setOnClickListener {
+                showDatePicker { selectedDate ->
+                    etDate.setText(selectedDate)
+                    tilDate.error = null
+                }
+            }
+
+            spinnerPerformance.onItemSelectedListener =
+                object : AdapterView.OnItemSelectedListener {
+                    override fun onItemSelected(
+                        parent: AdapterView<*>?,
+                        view: View?,
+                        position: Int,
+                        id: Long
+                    ) {
+                        if (position > 0) {
+                            val selectedPerformance = performances[position - 1]
+                            etAmount.setText(selectedPerformance.cost.toString())
+                            updateArtistsSelection(
+                                artistsContainer,
+                                selectedPerformance,
+                                currentArtists
+                            )
+                        }
+                    }
+
+                    override fun onNothingSelected(parent: AdapterView<*>?) {}
+                }
+        }
+
+        // Создание диалога
+        val dialog = AlertDialog.Builder(requireContext())
+            .setTitle("Редактирование заказа")
+            .setView(dialogView)
+            .setPositiveButton("Сохранить", null)
+            .setNegativeButton("Отмена", null)
+            .create()
+
+        dialog.setOnShowListener {
+            val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+            positiveButton.setOnClickListener {
+                if (validateOrderInputs(
+                        tilDate, etDate,
+                        tilLocation, etLocation,
+                        tilAmount, etAmount,
+                        spinnerPerformance,
+                        tilComment, etComment,
+                        artistsContainer
+                    )) {
+                    val performancePosition = spinnerPerformance.selectedItemPosition
+                    val amount = etAmount.text.toString().toDouble()
+                    val selectedArtists = getSelectedArtists(artistsContainer)
+
+                    viewModel.updateOrder(
+                        orderId = order.id,
+                        date = etDate.text.toString(),
+                        performanceId = performances[performancePosition - 1].id,
+                        location = etLocation.text.toString(),
+                        amount = amount,
+                        comment = etComment.text.toString(),
+                        isCompleted = switchCompleted.isChecked,
+                        artistIds = selectedArtists.map { it.id }
+                    ) {
+                        dialog.dismiss()
+                        Toast.makeText(requireContext(), "Заказ обновлен", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        }
+
+        dialog.show()
     }
 
     private fun showDeleteConfirmationDialog(order: Order) {
@@ -1258,7 +1784,9 @@ class ScheduleFragmentManager : Fragment() {
             .setTitle("Удаление заказа")
             .setMessage("Вы уверены, что хотите удалить этот заказ?")
             .setPositiveButton("Удалить") { _, _ ->
-                viewModel.deleteOrder(order.id)
+                viewModel.deleteOrder(order.id) {
+                    Toast.makeText(requireContext(), "Заказ удален", Toast.LENGTH_SHORT).show()
+                }
             }
             .setNegativeButton("Отмена", null)
             .show()
@@ -1269,13 +1797,12 @@ class ScheduleFragmentManager : Fragment() {
         tilLocation: TextInputLayout, etLocation: TextInputEditText,
         tilAmount: TextInputLayout, etAmount: TextInputEditText,
         spinnerPerformance: Spinner,
-        artistsContainer: LinearLayout,
         tilComment: TextInputLayout, etComment: TextInputEditText,
-        performances: List<Performance>
+        artistsContainer: LinearLayout
     ): Boolean {
         var isValid = true
 
-        // Validate date
+        // Проверка даты
         if (etDate.text.isNullOrEmpty()) {
             tilDate.error = "Укажите дату"
             isValid = false
@@ -1283,7 +1810,7 @@ class ScheduleFragmentManager : Fragment() {
             tilDate.error = null
         }
 
-        // Validate location
+        // Проверка места
         if (etLocation.text.isNullOrEmpty()) {
             tilLocation.error = "Укажите место"
             isValid = false
@@ -1291,7 +1818,7 @@ class ScheduleFragmentManager : Fragment() {
             tilLocation.error = null
         }
 
-        // Validate amount
+        // Проверка суммы
         try {
             etAmount.text.toString().toDouble()
             tilAmount.error = null
@@ -1300,30 +1827,32 @@ class ScheduleFragmentManager : Fragment() {
             isValid = false
         }
 
-        // Validate performance selection
+        // Проверка выбора номера
         if (spinnerPerformance.selectedItemPosition == 0) {
             (spinnerPerformance.selectedView as? TextView)?.error = "Выберите номер"
             isValid = false
-        } else {
-            val selectedPerformance = performances[spinnerPerformance.selectedItemPosition - 1]
-            val selectedArtistsCount = getSelectedArtists(artistsContainer, viewModel.artists.value).size
-
-            if (selectedArtistsCount != selectedPerformance.cntArtists) {
-                Toast.makeText(
-                    requireContext(),
-                    "Для этого номера требуется ${selectedPerformance.cntArtists} артистов",
-                    Toast.LENGTH_LONG
-                ).show()
-                isValid = false
-            }
         }
 
-        // Validate comment
+        // Проверка комментария
         if (etComment.text.isNullOrEmpty()) {
             tilComment.error = "Укажите комментарий"
             isValid = false
         } else {
             tilComment.error = null
+        }
+
+        // Проверка артистов
+        val selectedArtists = getSelectedArtists(artistsContainer)
+        if (spinnerPerformance.selectedItemPosition > 0) {
+            val requiredCount = performances[spinnerPerformance.selectedItemPosition - 1].cntArtists
+            if (selectedArtists.size != requiredCount) {
+                Toast.makeText(
+                    requireContext(),
+                    "Для этого номера требуется $requiredCount артистов",
+                    Toast.LENGTH_LONG
+                ).show()
+                isValid = false
+            }
         }
 
         return isValid
@@ -1332,18 +1861,14 @@ class ScheduleFragmentManager : Fragment() {
     private fun updateArtistsSelection(
         container: LinearLayout,
         performance: Performance,
-        artistPerformances: List<ArtistPerformance>,
-        allArtists: List<Artist>,
         selectedArtists: List<Artist> = emptyList()
     ) {
         container.removeAllViews()
 
-        // Get artists for this performance
-        val artistsForPerformance = artistPerformances
+        val artistsForPerformance = artistPerformances//artistPerformanceRepository.getArtistPerformances()
             .filter { it.performance.id == performance.id }
             .map { it.artist }
 
-        // Create checkboxes for artist selection
         artistsForPerformance.forEach { artist ->
             CheckBox(requireContext()).apply {
                 text = "${artist.firstName} ${artist.lastName}"
@@ -1353,27 +1878,23 @@ class ScheduleFragmentManager : Fragment() {
             }
         }
 
-        // Check if we have enough artists
         if (artistsForPerformance.size < performance.cntArtists) {
             Toast.makeText(
                 requireContext(),
-                "Внимание: для этого номера требуется ${performance.cntArtists} артистов, а доступно только ${artistsForPerformance.size}",
+                "Внимание: требуется ${performance.cntArtists} артистов, доступно ${artistsForPerformance.size}",
                 Toast.LENGTH_LONG
             ).show()
         }
     }
 
-    private fun getSelectedArtists(container: LinearLayout, allArtists: List<Artist>): List<Artist> {
-        val selectedArtists = mutableListOf<Artist>()
-        for (i in 0 until container.childCount) {
-            val view = container.getChildAt(i)
-            if (view is CheckBox && view.isChecked) {
-                allArtists.firstOrNull { it.id == view.tag as Int }?.let {
-                    selectedArtists.add(it)
-                }
+    private fun getSelectedArtists(container: LinearLayout): List<Artist> {
+        return (0 until container.childCount)
+            .map { container.getChildAt(it) }
+            .filterIsInstance<CheckBox>()
+            .filter { it.isChecked }
+            .mapNotNull { checkbox ->
+                allArtists.firstOrNull { it.id == checkbox.tag as Int }
             }
-        }
-        return selectedArtists
     }
 
     private fun showDatePicker(onDateSelected: (String) -> Unit) {
@@ -1381,13 +1902,7 @@ class ScheduleFragmentManager : Fragment() {
         DatePickerDialog(
             requireContext(),
             { _, year, month, day ->
-                val formattedDate = String.format(
-                    Locale.getDefault(),
-                    "%04d-%02d-%02d",
-                    year,
-                    month + 1,
-                    day
-                )
+                val formattedDate = "%04d-%02d-%02d".format(year, month + 1, day)
                 onDateSelected(formattedDate)
             },
             calendar.get(Calendar.YEAR),
@@ -1396,54 +1911,61 @@ class ScheduleFragmentManager : Fragment() {
         ).show()
     }
 
-    private inner class OrderAdapter(
-        private val onItemClick: (Order) -> Unit,
-        private val onDeleteClick: (Order) -> Unit
-    ) : RecyclerView.Adapter<OrderAdapter.OrderViewHolder>() {
-
-        private var orders: List<Order> = emptyList()
-
-        inner class OrderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-            val date: TextView = itemView.findViewById(R.id.orderDate)
-            val performance: TextView = itemView.findViewById(R.id.orderPerformance)
-            val deleteButton: ImageButton = itemView.findViewById(R.id.deleteButton)
-        }
-
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OrderViewHolder {
-            val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.item_order_manager, parent, false)
-            return OrderViewHolder(view)
-        }
-
-        override fun onBindViewHolder(holder: OrderViewHolder, position: Int) {
-            val order = orders[position]
-            holder.date.text = formatDateShort(order.date)
-            holder.performance.text = order.performance.title
-
-            holder.itemView.setOnClickListener {
-                onItemClick(order)
-            }
-
-            holder.deleteButton.setOnClickListener {
-                onDeleteClick(order)
-            }
-        }
-
-        override fun getItemCount() = orders.size
-
-        fun submitList(newOrders: List<Order>) {
-            orders = newOrders
-            notifyDataSetChanged()
-        }
-
-        private fun formatDateShort(dateString: String): String {
-            return try {
-                SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(dateString)?.let {
-                    SimpleDateFormat("dd MMM", Locale("ru")).format(it)
-                } ?: dateString
-            } catch (e: Exception) {
-                dateString
-            }
-        }
-    }
+//    private inner class OrderAdapter(
+//        private val onItemClick: (Order) -> Unit,
+//        private val onDeleteClick: (Order) -> Unit
+//    ) : RecyclerView.Adapter<OrderAdapter.OrderViewHolder>() {
+//
+//        //private var orders: List<Order> = emptyList()
+//        private var orders = mutableListOf<Order>()
+//
+//        inner class OrderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+//            val date: TextView = itemView.findViewById(R.id.orderDate)
+//            val performance: TextView = itemView.findViewById(R.id.orderPerformance)
+//            val deleteButton: ImageButton = itemView.findViewById(R.id.deleteButton)
+//        }
+//
+//        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OrderViewHolder {
+//            val view = LayoutInflater.from(parent.context)
+//                .inflate(R.layout.item_order_manager, parent, false)
+//            return OrderViewHolder(view)
+//        }
+//
+//        override fun onBindViewHolder(holder: OrderViewHolder, position: Int) {
+//            val order = orders[position]
+//            holder.date.text = formatDateShort(order.date)
+//            holder.performance.text = order.performance.title
+//
+//            holder.itemView.setOnClickListener {
+//                onItemClick(order)
+//            }
+//
+//            holder.deleteButton.setOnClickListener {
+//                onDeleteClick(order)
+//            }
+//        }
+//
+//        fun updateOrders(newOrders: List<Order>) {
+//            orders.clear()
+//            orders.addAll(newOrders)
+//            notifyDataSetChanged()
+//        }
+//
+//        override fun getItemCount() = orders.size
+//
+//        fun submitList(newOrders: List<Order>) {
+//            orders = newOrders.toMutableList()
+//            notifyDataSetChanged()
+//        }
+//
+//        private fun formatDateShort(dateString: String): String {
+//            return try {
+//                SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(dateString)?.let {
+//                    SimpleDateFormat("dd MMM", Locale("ru")).format(it)
+//                } ?: dateString
+//            } catch (e: Exception) {
+//                dateString
+//            }
+//        }
+//    }
 }

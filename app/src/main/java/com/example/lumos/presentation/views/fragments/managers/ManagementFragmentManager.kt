@@ -60,7 +60,7 @@ class ManagementFragmentManager : Fragment() {
         val artistServiceImpl = ArtistServiceImpl()
         val artistRepositoryImpl = ArtistRepositoryImpl(artistServiceImpl)
         val artistPerformanceServiceImpl = ArtistPerformanceServiceImpl()
-        val artistPerformanceRepositoryImpl = ArtistPerformanceRepositoryImpl(artistPerformanceServiceImpl, artistServiceImpl)
+        val artistPerformanceRepositoryImpl = ArtistPerformanceRepositoryImpl(artistPerformanceServiceImpl)
         val performanceServiceImpl = PerformanceServiceImpl()
         val performanceRepositoryImpl = PerformanceRepositoryImpl(performanceServiceImpl)
 

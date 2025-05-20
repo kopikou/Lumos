@@ -11,28 +11,48 @@ import com.example.lumos.domain.usecases.GetOrdersUseCase
 import com.example.lumos.domain.usecases.GetPerformancesUseCase
 import com.example.lumos.domain.usecases.UpdateOrderUseCase
 
+//class ScheduleManagerViewModelFactory(
+//    private val getOrdersUseCase: GetOrdersUseCase,
+//    private val createOrderUseCase: CreateOrderUseCase,
+//    private val updateOrderUseCase: UpdateOrderUseCase,
+//    private val deleteOrderUseCase: DeleteOrderUseCase,
+//    private val getPerformancesUseCase: GetPerformancesUseCase,
+//    private val getArtistsUseCase: GetArtistsUseCase,
+//    private val getArtistPerformancesUseCase: GetArtistPerformancesUseCase,
+//    private val getArtistsForOrderUseCase: GetArtistsForOrderUseCase
+//) : ViewModelProvider.Factory {
+//    @Suppress("UNCHECKED_CAST")
+//    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+//        if (modelClass.isAssignableFrom(ScheduleManagerViewModel::class.java)) {
+//            return ScheduleManagerViewModel(
+//                getOrdersUseCase,
+//                createOrderUseCase,
+//                updateOrderUseCase,
+//                deleteOrderUseCase,
+//                getPerformancesUseCase,
+//                getArtistsUseCase,
+//                getArtistPerformancesUseCase,
+//                getArtistsForOrderUseCase
+//            ) as T
+//        }
+//        throw IllegalArgumentException("Unknown ViewModel class")
+//    }
+//}
+
 class ScheduleManagerViewModelFactory(
     private val getOrdersUseCase: GetOrdersUseCase,
     private val createOrderUseCase: CreateOrderUseCase,
     private val updateOrderUseCase: UpdateOrderUseCase,
-    private val deleteOrderUseCase: DeleteOrderUseCase,
-    private val getPerformancesUseCase: GetPerformancesUseCase,
-    private val getArtistsUseCase: GetArtistsUseCase,
-    private val getArtistPerformancesUseCase: GetArtistPerformancesUseCase,
-    private val getArtistsForOrderUseCase: GetArtistsForOrderUseCase
+    private val deleteOrderUseCase: DeleteOrderUseCase
 ) : ViewModelProvider.Factory {
-    @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(ScheduleManagerViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
             return ScheduleManagerViewModel(
                 getOrdersUseCase,
                 createOrderUseCase,
                 updateOrderUseCase,
-                deleteOrderUseCase,
-                getPerformancesUseCase,
-                getArtistsUseCase,
-                getArtistPerformancesUseCase,
-                getArtistsForOrderUseCase
+                deleteOrderUseCase
             ) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")

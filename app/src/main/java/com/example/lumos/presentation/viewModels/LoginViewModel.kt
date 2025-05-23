@@ -16,7 +16,6 @@ class LoginViewModel(
 
     fun login(username: String, password: String) {
         viewModelScope.launch {
-            _loginState.value = LoginState.Loading
             try {
                 val success = loginUseCase(username, password)
                 _loginState.value = if (success) {
@@ -32,7 +31,6 @@ class LoginViewModel(
 }
 
 sealed class LoginState {
-    object Loading : LoginState()
     object Success : LoginState()
     data class Error(val message: String) : LoginState()
 }

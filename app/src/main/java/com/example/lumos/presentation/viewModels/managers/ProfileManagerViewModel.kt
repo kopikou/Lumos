@@ -1,4 +1,4 @@
-package com.example.lumos.presentation.viewModels
+package com.example.lumos.presentation.viewModels.managers
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -28,7 +28,7 @@ class ProfileManagerViewModel(
         viewModelScope.launch {
             try {
                 val financialData = getFinancialDataUseCase()
-                _financialData.value = financialData//getFinancialDataUseCase()
+                _financialData.value = financialData
                 _error.value = ""
             } catch (e: Exception) {
                 _error.value = "Ошибка загрузки финансовых данных"

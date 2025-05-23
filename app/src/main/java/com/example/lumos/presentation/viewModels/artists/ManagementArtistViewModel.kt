@@ -1,4 +1,4 @@
-package com.example.lumos.presentation.viewModels
+package com.example.lumos.presentation.viewModels.artists
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -47,6 +47,7 @@ class ManagementArtistViewModel(
 
                 artistId = getArtistIdUseCase(firstName, lastName)
                 loadCompletedOrders()
+                println(earningsMap.value?.values)
             } catch (e: Exception) {
                 _error.value = "Ошибка загрузки ID артиста"
             }
@@ -58,6 +59,7 @@ class ManagementArtistViewModel(
         viewModelScope.launch {
             try {
                 val (orders, earnings) = getCompletedOrdersUseCase(artistId)
+                println(earnings)
                 _orders.value = orders
                 _earningsMap.value = earnings
                 _error.value = null

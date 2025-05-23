@@ -3,11 +3,6 @@ package com.example.lumos.domain.usecases
 import com.example.lumos.data.repository.ArtistRepositoryImpl
 import com.example.lumos.data.repository.EarningRepositoryImpl
 import com.example.lumos.domain.entities.Artist
-import java.text.ParseException
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Date
-import java.util.Locale
 
 class GetArtistsForOrderUseCase (
     private val earningRepository: EarningRepositoryImpl,

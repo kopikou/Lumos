@@ -10,12 +10,10 @@ import java.util.Date
 import java.util.Locale
 
 class GetCompletedOrdersUseCase(
-    private val earningRepository: EarningRepositoryImpl,
-    private val artistId: Int
+    private val earningRepository: EarningRepositoryImpl
 ) {
     suspend operator fun invoke(artistId: Int): Pair<List<Order>, Map<Int, Earning>> {
-        val earnings = earningRepository.getEarnings()
-            .filter { it.artist.id == artistId }
+        val earnings = earningRepository.getEarnings().filter { it.artist.id == artistId }
 
         val today = Calendar.getInstance().apply {
             set(Calendar.HOUR_OF_DAY, 0)
@@ -32,7 +30,11 @@ class GetCompletedOrdersUseCase(
             }
             .sortedByDescending { it.date }
 
-        val earningsMap = earnings.associateBy { it.order.id }
+        val earningsMap = earnings
+            .filter { earning ->
+                completedOrders.any { it.id == earning.order.id }
+            }
+            .associateBy { it.order.id }
 
         return completedOrders to earningsMap
     }

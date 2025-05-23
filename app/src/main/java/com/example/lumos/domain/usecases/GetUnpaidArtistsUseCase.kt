@@ -8,8 +8,7 @@ import com.example.lumos.domain.entities.Earning
 
 class GetUnpaidArtistsUseCase(
     private val earningRepository: EarningRepositoryImpl,
-    private val orderRepository: OrderRepositoryImpl,
-    private val artistRepository: ArtistRepositoryImpl
+    private val orderRepository: OrderRepositoryImpl
 ) {
     suspend operator fun invoke(): List<ArtistWithUnpaid> {
         val earnings = earningRepository.getEarnings()

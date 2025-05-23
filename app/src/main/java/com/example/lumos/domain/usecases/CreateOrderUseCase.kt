@@ -4,12 +4,9 @@ import com.example.lumos.data.repository.ArtistPerformanceRepositoryImpl
 import com.example.lumos.data.repository.ArtistRepositoryImpl
 import com.example.lumos.data.repository.EarningRepositoryImpl
 import com.example.lumos.data.repository.OrderRepositoryImpl
-import com.example.lumos.domain.entities.Artist
-import com.example.lumos.domain.entities.ArtistPerformance
 import com.example.lumos.domain.entities.EarningCreateUpdateDto
 import com.example.lumos.domain.entities.Order
 import com.example.lumos.domain.entities.OrderCreateUpdateDto
-import com.example.lumos.domain.entities.Performance
 
 class CreateOrderUseCase(
     private val orderRepository: OrderRepositoryImpl,

@@ -1,7 +1,6 @@
 package com.example.lumos.data.repository
 
 import com.example.lumos.data.remote.impl.ArtistPerformanceServiceImpl
-import com.example.lumos.data.remote.impl.ArtistServiceImpl
 import com.example.lumos.domain.entities.ArtistPerformance
 import com.example.lumos.domain.entities.ArtistPerformanceCreateUpdateDto
 import com.example.lumos.domain.repositories.ArtistPerformanceRepository

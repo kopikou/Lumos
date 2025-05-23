@@ -8,15 +8,11 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.lumos.R
 import com.example.lumos.domain.entities.Order
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 class OrderManagerAdapter (
     private val onItemClick: (Order) -> Unit,
     private val onDeleteClick: (Order) -> Unit
 ) : RecyclerView.Adapter<OrderManagerAdapter.OrderViewHolder>() {
-
-    //private var orders: List<Order> = emptyList()
     private var orders = mutableListOf<Order>()
 
     inner class OrderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -52,7 +48,4 @@ class OrderManagerAdapter (
     }
 
     override fun getItemCount() = orders.size
-
-
-
 }

@@ -67,11 +67,9 @@ class EarningServiceImpl: EarningService {
 
     suspend fun deleteEarningsByOrder(orderId: Int) {
         try {
-            // First get all earnings for this order
             val allEarnings = getEarnings()
             val earningsToDelete = allEarnings.filter { it.order.id == orderId }
 
-            // Delete each earning
             earningsToDelete.forEach { earning ->
                 deleteEarning(earning.id)
             }

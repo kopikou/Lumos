@@ -1,4 +1,4 @@
-package com.example.lumos.presentation.viewModels
+package com.example.lumos.presentation.viewModels.artists
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

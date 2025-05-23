@@ -53,7 +53,7 @@ class ArtistServiceImpl: ArtistService {
         return artist
     }
 
-    override suspend fun deleteArtist(id: Int): Unit {
+    override suspend fun deleteArtist(id: Int){
         try {
             service.deleteArtist(id)
             Log.d(TAG, "Deleted artist with: $id")

@@ -31,9 +31,9 @@ import com.example.lumos.presentation.adapters.ArtistsAdapter
 import com.example.lumos.presentation.adapters.ArtistsSimpleAdapter
 import com.example.lumos.presentation.adapters.PerformancesAdapter
 import com.example.lumos.presentation.adapters.PerformancesSimpleAdapter
-import com.example.lumos.presentation.viewModels.ManagementManagerViewModel
+import com.example.lumos.presentation.viewModels.managers.ManagementManagerViewModel
 import com.example.lumos.presentation.adapters.UnpaidArtistsAdapter
-import com.example.lumos.presentation.viewModels.ManagementManagerViewModelFactory
+import com.example.lumos.presentation.viewModels.managers.ManagementManagerViewModelFactory
 
 class ManagementFragmentManager : Fragment() {
     private lateinit var unpaidEarningsCard: CardView
@@ -65,7 +65,7 @@ class ManagementFragmentManager : Fragment() {
         val performanceRepositoryImpl = PerformanceRepositoryImpl(performanceServiceImpl)
 
         val factory = ManagementManagerViewModelFactory(
-            GetUnpaidArtistsUseCase(earningRepositoryImpl, orderRepositoryImpl, artistRepositoryImpl),
+            GetUnpaidArtistsUseCase(earningRepositoryImpl, orderRepositoryImpl),
             MarkEarningsAsPaidUseCase(artistRepositoryImpl, earningRepositoryImpl),
             GetArtistDetailsUseCase(artistRepositoryImpl, artistPerformanceRepositoryImpl, performanceRepositoryImpl),
             GetPerformanceArtistsUseCase(artistPerformanceRepositoryImpl,artistRepositoryImpl),

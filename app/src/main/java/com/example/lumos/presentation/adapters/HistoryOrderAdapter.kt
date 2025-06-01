@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.lumos.R
 import com.example.lumos.domain.entities.Earning
 import com.example.lumos.domain.entities.Order
+import com.example.lumos.presentation.utils.DateFormatter
 
 class HistoryOrderAdapter(
     private val context: Context,

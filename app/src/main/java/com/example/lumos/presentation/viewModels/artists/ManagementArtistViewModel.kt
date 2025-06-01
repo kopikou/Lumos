@@ -1,6 +1,5 @@
 package com.example.lumos.presentation.viewModels.artists
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -20,17 +19,9 @@ class ManagementArtistViewModel(
     private val tokenManager: TokenManager
 ) : ViewModel() {
 
-    private val _orders = MutableLiveData<List<Order>>()
-    val orders: LiveData<List<Order>> = _orders
-
-    private val _earningsMap = MutableLiveData<Map<Int, Earning>>()
-    val earningsMap: LiveData<Map<Int, Earning>> = _earningsMap
-
-    private val _error = MutableLiveData<String?>()
-    val error: LiveData<String?> = _error
-
-    private val _loading = MutableLiveData<Boolean>()
-    val loading: LiveData<Boolean> = _loading
+    val orders = MutableLiveData<List<Order>>()
+    val earningsMap = MutableLiveData<Map<Int, Earning>>()
+    val error = MutableLiveData<String?>()
 
     private var artistId: Int = 0
 
@@ -43,30 +34,23 @@ class ManagementArtistViewModel(
             try {
                 val firstName = tokenManager.getFirstName() ?: return@launch
                 val lastName = tokenManager.getLastName() ?: return@launch
-                println("TokenManager data: firstName=${tokenManager.getFirstName()}, lastName=${tokenManager.getLastName()}")
-
                 artistId = getArtistIdUseCase(firstName, lastName)
                 loadCompletedOrders()
-                println(earningsMap.value?.values)
             } catch (e: Exception) {
-                _error.value = "Ошибка загрузки ID артиста"
+                error.value = "Ошибка загрузки ID артиста"
             }
         }
     }
 
     fun loadCompletedOrders() {
-        _loading.value = true
         viewModelScope.launch {
             try {
-                val (orders, earnings) = getCompletedOrdersUseCase(artistId)
-                println(earnings)
-                _orders.value = orders
-                _earningsMap.value = earnings
-                _error.value = null
+                val (ordersList, earnings) = getCompletedOrdersUseCase(artistId)
+                orders.value = ordersList
+                earningsMap.value = earnings
+                error.value = null
             } catch (e: Exception) {
-                _error.value = "Ошибка загрузки истории заказов"
-            } finally {
-                _loading.value = false
+                error.value = "Ошибка загрузки истории заказов"
             }
         }
     }

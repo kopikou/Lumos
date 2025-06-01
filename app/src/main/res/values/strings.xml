@@ -64,4 +64,31 @@
     <string name="profit">Чистая прибыль</string>
     <string name="add_order">Добавить заказ</string>
     <string name="delete_order">Удалить заказ</string>
+
+    <string name="salary_credited">Зарплата начислена</string>
+    <string name="order_details">Детали заказа</string>
+    <string name="save">Сохранить</string>
+    <string name="close">Закрыть</string>
+
+    <string name="edit_profile_title">Редактировать профиль</string>
+    <string name="name_required">Введите имя</string>
+    <string name="lastname_required">Введите фамилию</string>
+    <string name="phone_required">Введите телефон</string>
+    <string name="cancel">Отмена</string>
+    <string name="artist_load_error">Ошибка загрузки данных артиста</string>
+    <string name="profile_update_error">Ошибка обновления профиля</string>
+    <string name="artist_data_not_loaded">Данные артиста не загружены</string>
+    <string name="full_name_format">%1$s %2$s</string>
+    <string name="balance_format">%,.2f ₽</string>
+    <string name="logout_title">Выход</string>
+    <string name="logout_confirmation">Вы уверены, что хотите выйти из профиля?</string>
+    <string name="profile_updated_successfully">Профиль успешно обновлен</string>
+
+    <string name="order_details_title">Детали заказа</string>
+    <string name="completed">Выполнен</string>
+    <string name="not_payable">Не выплачивается</string>
+    <string name="payment_not_found">Ошибка: запись о выплате не найдена</string>
+    <string name="price_format">%,.2f ₽</string>
+    <string name="error_loading_data">Ошибка загрузки данных</string>
 </resources>
+

@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.lumos.R
 import com.example.lumos.domain.entities.Order
+import com.example.lumos.presentation.utils.DateFormatter
 
 class OrderManagerAdapter (
     private val onItemClick: (Order) -> Unit,

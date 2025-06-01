@@ -13,8 +13,6 @@ class ScheduleArtistViewModel(
     private val getArtistOrdersUseCase: GetArtistOrdersUseCase,
     private val updateOrderStatusUseCase: UpdateOrderStatusUseCase
 ) : ViewModel() {
-    private val _orders = MutableStateFlow<List<Order>>(emptyList())
-    val orders: StateFlow<List<Order>> = _orders
 
     private val _uiState = MutableStateFlow<UiState>(UiState.Loading)
     val uiState: StateFlow<UiState> = _uiState
@@ -22,8 +20,8 @@ class ScheduleArtistViewModel(
     sealed class UiState {
         object Loading : UiState()
         object Empty : UiState()
-        data class Success(val orders: List<Order>) : UiState()
         data class Error(val message: String) : UiState()
+        data class Success(val orders: List<Order>) : UiState()
     }
 
     fun loadOrders() {
@@ -31,20 +29,29 @@ class ScheduleArtistViewModel(
             _uiState.value = UiState.Loading
             try {
                 val orders = getArtistOrdersUseCase()
-                _orders.value = orders
-                _uiState.value = if (orders.isEmpty()) UiState.Empty else UiState.Success(orders)
+                _uiState.value = if (orders.isEmpty()) {
+                    UiState.Empty
+                } else {
+                    UiState.Success(orders)
+                }
             } catch (e: Exception) {
-                _uiState.value = UiState.Error("Ошибка загрузки заказов")
+                _uiState.value = UiState.Error(e.message ?: "Unknown error")
             }
         }
     }
 
     fun updateOrderStatus(orderId: Int, isCompleted: Boolean, onSuccess: () -> Unit) {
         viewModelScope.launch {
-            val success = updateOrderStatusUseCase(orderId, isCompleted)
-            if (success) {
-                loadOrders() // Обновляем список
-                onSuccess()
+            try {
+                val success = updateOrderStatusUseCase(orderId, isCompleted)
+                if (success) {
+                    loadOrders()
+                    onSuccess()
+                } else {
+                    _uiState.value = UiState.Error("Failed to update order status")
+                }
+            } catch (e: Exception) {
+                _uiState.value = UiState.Error(e.message ?: "Failed to update order status")
             }
         }
     }

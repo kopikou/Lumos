@@ -1,4 +1,4 @@
-package com.example.lumos.presentation.adapters
+package com.example.lumos.presentation.utils
 
 import java.text.SimpleDateFormat
 import java.util.Date

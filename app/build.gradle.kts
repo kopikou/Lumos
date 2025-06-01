@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("kotlin-kapt")
+    id ("kotlin-parcelize")
 }
 
 android {
@@ -64,6 +65,11 @@ dependencies {
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.material)
     implementation(libs.androidx.runtime.saved.instance.state)
+    implementation(libs.androidx.lifecycle.viewmodel.android)
+    implementation(libs.androidx.espresso.intents)
+    implementation(libs.androidx.junit.ktx)
+    implementation(libs.androidx.espresso.contrib)
+    implementation(libs.androidx.uiautomator)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -71,6 +77,7 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    androidTestImplementation ("com.squareup.okhttp3:mockwebserver:4.10.0")
 
     // Зависимости Room
     implementation("androidx.room:room-runtime:2.5.0")

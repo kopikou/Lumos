@@ -1,9 +1,10 @@
 package com.example.lumos.presentation.viewModels.artists
-
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.lumos.R
 import com.example.lumos.data.local.auth.TokenManager
 import com.example.lumos.domain.entities.Artist
 import com.example.lumos.domain.entities.UserUpdateRequest
@@ -18,7 +19,8 @@ class ProfileArtistViewModel(
     private val updateArtistUseCase: UpdateArtistUseCase,
     private val updateUserUseCase: UpdateUserUseCase,
     private val logoutUseCase: LogoutUseCase,
-    private val tokenManager: TokenManager
+    private val tokenManager: TokenManager,
+    private val context: Context
 ) : ViewModel() {
 
     private val _artist = MutableLiveData<Artist?>()
@@ -30,6 +32,10 @@ class ProfileArtistViewModel(
     private val _loading = MutableLiveData<Boolean>()
     val loading: LiveData<Boolean> = _loading
 
+    fun getSavedFirstName(): String? = tokenManager.getFirstName()
+    fun getSavedLastName(): String? = tokenManager.getLastName()
+    fun getUserId(): Int? = tokenManager.getUserId()
+
     fun loadArtist(firstName: String, lastName: String) {
         _loading.value = true
         viewModelScope.launch {
@@ -37,7 +43,7 @@ class ProfileArtistViewModel(
                 _artist.value = getArtistUseCase(firstName, lastName)
                 _error.value = null
             } catch (e: Exception) {
-                _error.value = "Ошибка загрузки данных артиста"
+                _error.value = context.getString(R.string.artist_load_error)
             } finally {
                 _loading.value = false
             }
@@ -52,7 +58,6 @@ class ProfileArtistViewModel(
         phone: String
     ): Boolean {
         return try {
-            // Обновляем артиста
             val updatedArtist = _artist.value?.copy(
                 firstName = firstName,
                 lastName = lastName,
@@ -61,18 +66,17 @@ class ProfileArtistViewModel(
 
             updateArtistUseCase(artistId, updatedArtist)
 
-            // Обновляем пользователя
             updateUserUseCase(userId, UserUpdateRequest(firstName, lastName))
 
-            // Обновляем локальные данные
             _artist.value = updatedArtist
             tokenManager.saveUserNames(firstName, lastName)
             true
         } catch (e: Exception) {
-            _error.value = "Ошибка обновления профиля"
+            _error.value = context.getString(R.string.profile_update_error)
             false
         }
     }
+
     fun logout() {
         logoutUseCase()
     }

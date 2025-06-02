@@ -90,5 +90,17 @@
     <string name="payment_not_found">Ошибка: запись о выплате не найдена</string>
     <string name="price_format">%,.2f ₽</string>
     <string name="error_loading_data">Ошибка загрузки данных</string>
+    <string name="new_artist">Новый артист</string>
+    <string name="new_performance">Новый номер</string>
+    <string name="title">Название</string>
+    <string name="duration">Продолжительность (мин)</string>
+    <string name="cost">Стоимость</string>
+    <string name="cnt_artists">Количество артистов</string>
+    <string name="add">Добавить</string>
+    <string name="rate">Выберите ставку</string>
+    <string name="choose_performance">Выберите номер</string>
+    <string name="delete_performance">Удалить номер</string>
+    <string name="delete_artist">Удалить артиста</string>
+    <string name="add_performance">Добавить номер</string>
 </resources>
 

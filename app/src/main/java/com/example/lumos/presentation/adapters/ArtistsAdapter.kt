@@ -3,6 +3,7 @@ package com.example.lumos.presentation.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -11,7 +12,8 @@ import com.example.lumos.R
 import com.example.lumos.domain.entities.Artist
 
 class ArtistsAdapter(
-    private val onItemClick: (Artist) -> Unit
+    private val onItemClick: (Artist) -> Unit,
+    private val onDeleteClick: (Artist) -> Unit
 ) : ListAdapter<Artist, ArtistsAdapter.ArtistViewHolder>(ArtistDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ArtistViewHolder {
@@ -26,10 +28,12 @@ class ArtistsAdapter(
 
     inner class ArtistViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val nameText: TextView = itemView.findViewById(R.id.artist_name)
+        private val deleteButton: ImageButton = itemView.findViewById(R.id.btnDelete)
 
         fun bind(artist: Artist) {
             nameText.text = "${artist.firstName} ${artist.lastName}"
             itemView.setOnClickListener { onItemClick(artist) }
+            deleteButton.setOnClickListener { onDeleteClick(artist) } // Обработка клика по кнопке удаления
         }
     }
 

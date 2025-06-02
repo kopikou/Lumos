@@ -2,6 +2,7 @@ package com.example.lumos.presentation.views.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -37,7 +38,14 @@ class MainActivity : AppCompatActivity() {
         initializeDependencies()
         if (checkAuthorization()) return
         setupUI(savedInstanceState)
-        loadArtistDataIfNeeded()
+        //loadArtistData()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        if (!checkAuthorization()) {
+            loadArtistData()
+        }
     }
 
     private fun initializeDependencies() {
@@ -71,11 +79,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun loadArtistDataIfNeeded() {
-        lifecycleScope.launch {
-            val firstName = tokenManager.getFirstName() ?: return@launch
-            val lastName = tokenManager.getLastName() ?: return@launch
-            viewModel.loadArtist(firstName, lastName)
+    private fun loadArtistData() {
+        val firstName = tokenManager.getFirstName()
+        val lastName = tokenManager.getLastName()
+
+        if (firstName != null && lastName != null) {
+            lifecycleScope.launch {
+                viewModel.loadArtist(firstName, lastName)
+            }
         }
     }
 

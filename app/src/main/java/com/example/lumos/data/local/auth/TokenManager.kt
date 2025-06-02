@@ -35,7 +35,7 @@ class TokenManager(context: Context) {
         sharedPreferences.edit().apply {
             putString("first_name", firstName)
             putString("last_name", lastName)
-            apply()
+            commit()
         }
     }
 

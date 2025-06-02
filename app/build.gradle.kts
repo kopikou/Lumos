@@ -70,6 +70,7 @@ dependencies {
     implementation(libs.androidx.junit.ktx)
     implementation(libs.androidx.espresso.contrib)
     implementation(libs.androidx.uiautomator)
+    implementation(libs.androidx.databinding.runtime)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

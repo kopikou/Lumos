@@ -61,14 +61,19 @@ class ArtistServiceImpl: ArtistService {
             Log.e(TAG, "Error deleting artist", e)
         }
     }
-     suspend fun getArtistByName(firstName: String, lastName: String): Artist{
-         lateinit var artistByName: Artist
-         var artists = getArtists()
-         for (artist in artists){
-             if (artist.firstName == firstName && artist.lastName == lastName){
-                 artistByName = artist
-             }
-         }
-         return artistByName
-     }
+    suspend fun getArtistByName(firstName: String, lastName: String): Artist {
+        lateinit var artist: Artist
+        try {
+            val artists = getArtists()
+            for (artist in artists) {
+                if (artist.firstName == firstName && artist.lastName == lastName) {
+                    return artist
+                }
+            }
+            Log.d(TAG, "Received artists: $artist")
+        } catch (e: Exception) {
+            Log.e(TAG, "Error fetching artist", e)
+        }
+        return artist
+    }
 }

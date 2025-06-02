@@ -17,7 +17,6 @@ class ScheduleManagerViewModel(
     private val updateOrderUseCase: UpdateOrderUseCase,
     private val deleteOrderUseCase: DeleteOrderUseCase
 ) : ViewModel() {
-
     private val _orders = MutableStateFlow<List<Order>>(emptyList())
     val orders: StateFlow<List<Order>> = _orders
 
@@ -99,4 +98,5 @@ class ScheduleManagerViewModel(
             }
         }
     }
+
 }

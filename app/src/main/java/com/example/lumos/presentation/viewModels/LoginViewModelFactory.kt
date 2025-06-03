@@ -12,6 +12,6 @@ class LoginViewModelFactory(
             @Suppress("UNCHECKED_CAST")
             return LoginViewModel(loginUseCase) as T
         }
-        throw IllegalArgumentException("Unknown ViewModel class")
+        throw IllegalArgumentException("Неизвестная модель")
     }
 }

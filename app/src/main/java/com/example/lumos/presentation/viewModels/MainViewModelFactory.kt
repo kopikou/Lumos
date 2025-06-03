@@ -12,6 +12,6 @@ class MainViewModelFactory(
             @Suppress("UNCHECKED_CAST")
             return MainViewModel(getArtistUseCase) as T
         }
-        throw IllegalArgumentException("Unknown ViewModel class")
+        throw IllegalArgumentException("Неизвестная модель")
     }
 }

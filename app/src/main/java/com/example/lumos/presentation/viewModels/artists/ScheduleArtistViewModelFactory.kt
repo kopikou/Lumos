@@ -21,7 +21,7 @@ class ScheduleArtistViewModelFactory(private val context: Context) : ViewModelPr
                 updateOrderStatusUseCase = createUpdateOrderStatusUseCase()
             ) as T
         }
-        throw IllegalArgumentException("Unknown ViewModel class")
+        throw IllegalArgumentException("Неизвестная модель")
     }
 
     private fun createGetArtistOrdersUseCase(context: Context): GetArtistOrdersUseCase {

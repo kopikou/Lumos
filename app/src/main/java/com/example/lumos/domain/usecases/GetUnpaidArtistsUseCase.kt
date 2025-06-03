@@ -1,6 +1,5 @@
 package com.example.lumos.domain.usecases
 
-import com.example.lumos.data.repository.ArtistRepositoryImpl
 import com.example.lumos.data.repository.EarningRepositoryImpl
 import com.example.lumos.data.repository.OrderRepositoryImpl
 import com.example.lumos.domain.entities.Artist

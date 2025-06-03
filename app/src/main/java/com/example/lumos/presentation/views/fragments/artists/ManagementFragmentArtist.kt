@@ -76,7 +76,7 @@ class ManagementFragmentArtist : Fragment() {
         viewModel.error.observe(viewLifecycleOwner) { error ->
             error?.let {
                 Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
-                Log.e("OrdersError", it)
+                Log.e("Заказы", it)
             }
         }
     }

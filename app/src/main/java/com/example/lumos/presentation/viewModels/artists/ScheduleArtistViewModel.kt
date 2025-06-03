@@ -35,7 +35,7 @@ class ScheduleArtistViewModel(
                     UiState.Success(orders)
                 }
             } catch (e: Exception) {
-                _uiState.value = UiState.Error(e.message ?: "Unknown error")
+                _uiState.value = UiState.Error(e.message ?: "Неизвестная ошибка")
             }
         }
     }
@@ -48,10 +48,10 @@ class ScheduleArtistViewModel(
                     loadOrders()
                     onSuccess()
                 } else {
-                    _uiState.value = UiState.Error("Failed to update order status")
+                    _uiState.value = UiState.Error("Ошибка обновления статуса заказа")
                 }
             } catch (e: Exception) {
-                _uiState.value = UiState.Error(e.message ?: "Failed to update order status")
+                _uiState.value = UiState.Error(e.message ?: "Ошибка обновления статуса заказа")
             }
         }
     }

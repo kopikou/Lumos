@@ -14,7 +14,6 @@ import com.example.lumos.domain.entities.ArtistPerformanceCreateUpdateDto
 import com.example.lumos.domain.entities.PerformanceCreateUpdateDto
 import com.example.lumos.domain.entities.ShowRate
 import com.example.lumos.domain.entities.Type
-import com.example.lumos.domain.repositories.ShowRateRepository
 import com.example.lumos.domain.usecases.AddPerformanceToArtistUseCase
 import com.example.lumos.domain.usecases.ArtistDetails
 import com.example.lumos.domain.usecases.ArtistWithUnpaid
@@ -220,7 +219,7 @@ class ManagementManagerViewModel(
                 // Обновляем детали артиста после добавления номера
                 loadArtistDetails(artistId)
             } catch (e: Exception) {
-                Log.e("ArtistPerformance", "Failed to add performance to artist", e)
+                Log.e("Артисты и номера", "Ошибка добавления номера артисту", e)
             }
         }
     }
@@ -232,7 +231,7 @@ class ManagementManagerViewModel(
                 ratesForType.value = allRates.filter { it.showType.id == typeId }
             } catch (e: Exception) {
                 ratesForType.value = emptyList()
-                Log.e("Rates", "Failed to load rates", e)
+                Log.e("Ставки", "Ошибка загрузки ставок", e)
             }
         }
     }

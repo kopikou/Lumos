@@ -33,7 +33,7 @@ class ArtistsAdapter(
         fun bind(artist: Artist) {
             nameText.text = "${artist.firstName} ${artist.lastName}"
             itemView.setOnClickListener { onItemClick(artist) }
-            deleteButton.setOnClickListener { onDeleteClick(artist) } // Обработка клика по кнопке удаления
+            deleteButton.setOnClickListener { onDeleteClick(artist) }
         }
     }
 

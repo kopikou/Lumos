@@ -13,9 +13,8 @@ class OrderServiceImpl: OrderService {
         lateinit var orders: List<Order>
         try {
             orders = service.getOrders()
-            Log.d(TAG, "Received orders: $orders")
         } catch (e: Exception) {
-            Log.e(TAG, "Error fetching orders", e)
+            Log.e(TAG, "Ошибка загрузки заказов", e)
         }
         return orders
     }
@@ -24,9 +23,8 @@ class OrderServiceImpl: OrderService {
         lateinit var order: Order
         try {
             order = service.getOrderById(id)
-            Log.d(TAG, "Received order: $order")
         } catch (e: Exception) {
-            Log.e(TAG, "Error fetching order", e)
+            Log.e(TAG, "Ошибка загрузки заказа", e)
         }
         return order
     }
@@ -35,9 +33,8 @@ class OrderServiceImpl: OrderService {
         lateinit var order: OrderCreateUpdateDto
         try {
             order = service.createOrder(_order)
-            Log.d(TAG, "Created order: $order")
         } catch (e: Exception) {
-            Log.e(TAG, "Error creating order", e)
+            Log.e(TAG, "Ошибка создания заказа", e)
         }
         return order
     }
@@ -49,9 +46,8 @@ class OrderServiceImpl: OrderService {
         lateinit var order: OrderCreateUpdateDto
         try {
             order = service.updateOrder(id,_order)
-            Log.d(TAG, "Updated order: $order")
         } catch (e: Exception) {
-            Log.e(TAG, "Error updating order", e)
+            Log.e(TAG, "Ошибка обновления заказа", e)
         }
         return order
     }
@@ -59,9 +55,8 @@ class OrderServiceImpl: OrderService {
     override suspend fun deleteOrder(id: Int) {
         try {
             service.deleteOrder(id)
-            Log.d(TAG, "Deleted order with: $id")
         } catch (e: Exception) {
-            //Log.e(TAG, "Error deleting order", e)
+            null
         }
     }
 }

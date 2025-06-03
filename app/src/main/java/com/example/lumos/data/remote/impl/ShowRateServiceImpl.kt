@@ -13,9 +13,8 @@ class ShowRateServiceImpl: ShowRateService {
         lateinit var showRates: List<ShowRate>
         try {
             showRates = service.getShowRates()
-            Log.d(TAG, "Received showRates: $showRates")
         } catch (e: Exception) {
-            Log.e(TAG, "Error fetching showRates", e)
+            Log.e(TAG, "Ошибка загрузки ставок", e)
         }
         return showRates
     }
@@ -24,9 +23,8 @@ class ShowRateServiceImpl: ShowRateService {
         lateinit var showRate: ShowRate
         try {
             showRate = service.getShowRateById(id)
-            Log.d(TAG, "Received showRate: $showRate")
         } catch (e: Exception) {
-            Log.e(TAG, "Error fetching showRate", e)
+            Log.e(TAG, "Ошибка загрузки ставки", e)
         }
         return showRate
     }
@@ -35,9 +33,8 @@ class ShowRateServiceImpl: ShowRateService {
     lateinit var showRate: ShowRateCreateUpdateDto
     try {
         showRate = service.createShowRate(_showRate)
-        Log.d(TAG, "Created showRate: $showRate")
     } catch (e: Exception) {
-        Log.e(TAG, "Error creating showRate", e)
+        Log.e(TAG, "Ошибка создания ставки", e)
     }
     return showRate
 }
@@ -46,9 +43,8 @@ class ShowRateServiceImpl: ShowRateService {
         lateinit var showRate: ShowRateCreateUpdateDto
         try {
             showRate = service.updateShowRate(id,_showRate)
-            Log.d(TAG, "Updated showRate: $showRate")
         } catch (e: Exception) {
-            Log.e(TAG, "Error updating showRate", e)
+            Log.e(TAG, "Ошибка обновления ставки", e)
         }
         return showRate
     }
@@ -56,9 +52,8 @@ class ShowRateServiceImpl: ShowRateService {
     override suspend fun deleteShowRate(id: Int) {
         try {
             service.deleteShowRate(id)
-            Log.d(TAG, "Deleted showRate with: $id")
         } catch (e: Exception) {
-            //Log.e(TAG, "Error deleting showRate", e)
+            null
         }
     }
 }

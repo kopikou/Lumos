@@ -13,7 +13,7 @@ class UserServiceImpl : UserService {
         return try {
             service.updateUser(userId, user)
         } catch (e: Exception) {
-            Log.e("UserService", "Error updating user", e)
+            Log.e("UserService", "Ошибка обновления пользователя", e)
             throw e
         }
     }

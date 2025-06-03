@@ -58,7 +58,7 @@ class AddPerformanceDialog : DialogFragment() {
 
         binding.btnSave.setOnClickListener {
             if (types.isEmpty()) {
-                Toast.makeText(requireContext(), "Types not loaded yet", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Типы ещё не загружены", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
@@ -80,7 +80,7 @@ class AddPerformanceDialog : DialogFragment() {
 
     fun setTypes(types: List<Type>) {
         this.types = types
-        if (_binding != null) { // Check if view is created
+        if (_binding != null) {
             updateSpinner()
         }
     }

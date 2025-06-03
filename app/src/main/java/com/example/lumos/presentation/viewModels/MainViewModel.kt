@@ -24,7 +24,7 @@ class MainViewModel(
                 val artist = getArtistByNameUseCase(firstName, lastName)
                 _artist.postValue(artist)
             } catch (e: Exception) {
-                Log.e("Artists", "Loading artists failed", e)
+                Log.e("Артисты", "Ошибка загрузки артистов", e)
             }
         }
     }

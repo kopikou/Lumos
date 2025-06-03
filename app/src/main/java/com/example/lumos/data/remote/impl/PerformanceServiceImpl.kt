@@ -13,9 +13,8 @@ class PerformanceServiceImpl: PerformanceService {
         lateinit var performances: List<Performance>
         try {
             performances = service.getPerformances()
-            Log.d(TAG, "Received performances: $performances")
         } catch (e: Exception) {
-            Log.e(TAG, "Error fetching performances", e)
+            Log.e(TAG, "Ошибка загрузки номеров", e)
         }
         return performances
     }
@@ -24,9 +23,8 @@ class PerformanceServiceImpl: PerformanceService {
         lateinit var performance: Performance
         try {
             performance = service.getPerformanceById(id)
-            Log.d(TAG, "Received performance: $performance")
         } catch (e: Exception) {
-            Log.e(TAG, "Error fetching performance", e)
+            Log.e(TAG, "Ошибка загрузки номера", e)
         }
         return performance
     }
@@ -35,9 +33,8 @@ class PerformanceServiceImpl: PerformanceService {
         lateinit var performance: PerformanceCreateUpdateDto
         try {
             performance = service.createPerformance(_performance)
-            Log.d(TAG, "Created performance: $performance")
         } catch (e: Exception) {
-            Log.e(TAG, "Error creating performance", e)
+            Log.e(TAG, "Ошибка создания номера", e)
         }
         return performance
     }
@@ -46,9 +43,8 @@ class PerformanceServiceImpl: PerformanceService {
         lateinit var performance: PerformanceCreateUpdateDto
         try {
             performance = service.updatePerformance(id,_performance)
-            Log.d(TAG, "Updated performance: $performance")
         } catch (e: Exception) {
-            Log.e(TAG, "Error updating performance", e)
+            Log.e(TAG, "Ошибка обновления номера", e)
         }
         return performance
     }
@@ -56,9 +52,8 @@ class PerformanceServiceImpl: PerformanceService {
     override suspend fun deletePerformance(id: Int) {
         try {
             service.deletePerformance(id)
-            Log.d(TAG, "Deleted performance with: $id")
         } catch (e: Exception) {
-            //Log.e(TAG, "Error deleting performance", e)
+            null
         }
     }
 }

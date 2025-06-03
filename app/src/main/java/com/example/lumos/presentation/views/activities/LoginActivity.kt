@@ -51,11 +51,11 @@ class LoginActivity : AppCompatActivity() {
 
             when {
                 username.isEmpty() -> {
-                    binding.usernameLayout.error = "Username is required"
+                    binding.usernameLayout.error = "Требуется имя пользователя"
                     binding.usernameEditText.requestFocus()
                 }
                 password.isEmpty() -> {
-                    binding.passwordLayout.error = "Password is required"
+                    binding.passwordLayout.error = "Требуется пароль"
                     binding.passwordEditText.requestFocus()
                 }
                 else -> {

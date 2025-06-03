@@ -13,9 +13,8 @@ class EarningServiceImpl: EarningService {
         lateinit var earnings: List<Earning>
         try {
             earnings = service.getEarnings()
-            Log.d(TAG, "Received earnings: $earnings")
         } catch (e: Exception) {
-            Log.e(TAG, "Error fetching earnings", e)
+            Log.e(TAG, "Ошибка загрузки зарплат", e)
         }
         return earnings
     }
@@ -24,9 +23,8 @@ class EarningServiceImpl: EarningService {
         lateinit var earning: Earning
         try {
             earning = service.getEarningById(id)
-            Log.d(TAG, "Received earning: $earning")
         } catch (e: Exception) {
-            Log.e(TAG, "Error fetching earning", e)
+            Log.e(TAG, "Ошибка загрузки зарплаты", e)
         }
         return earning
     }
@@ -35,9 +33,8 @@ class EarningServiceImpl: EarningService {
         lateinit var earning: EarningCreateUpdateDto
         try {
             earning = service.createEarning(_earning)
-            Log.d(TAG, "Created earning: $earning")
         } catch (e: Exception) {
-            Log.e(TAG, "Error creating earning", e)
+            Log.e(TAG, "Ошибка создания зарплаты", e)
         }
         return earning
     }
@@ -49,9 +46,8 @@ class EarningServiceImpl: EarningService {
         lateinit var earning: EarningCreateUpdateDto
         try {
             earning = service.updateEarning(id,_earning)
-            Log.d(TAG, "Updated earning: $earning")
         } catch (e: Exception) {
-            Log.e(TAG, "Error updating earning", e)
+            Log.e(TAG, "Ошибка обноаления зарплаты", e)
         }
         return earning
     }
@@ -59,9 +55,8 @@ class EarningServiceImpl: EarningService {
     override suspend fun deleteEarning(id: Int) {
         try {
             service.deleteEarning(id)
-            Log.d(TAG, "Deleted earning with: $id")
         } catch (e: Exception) {
-            //Log.e(TAG, "Error deleting earning", e)
+            null
         }
     }
 
@@ -73,9 +68,8 @@ class EarningServiceImpl: EarningService {
             earningsToDelete.forEach { earning ->
                 deleteEarning(earning.id)
             }
-            Log.d(TAG, "Deleted all earnings for order: $orderId")
         } catch (e: Exception) {
-            Log.e(TAG, "Error deleting earnings by order", e)
+            null
         }
     }
 }

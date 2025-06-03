@@ -26,7 +26,7 @@ class ProfileArtistViewModelFactory(private val context: Context) : ViewModelPro
                 context = context
             ) as T
         }
-        throw IllegalArgumentException("Unknown ViewModel class")
+        throw IllegalArgumentException("Неизвестная модель")
     }
 
     private fun createGetArtistUseCase(): GetArtistByNameUseCase {

@@ -12,9 +12,8 @@ class TypeServiceImpl: TypeService {
         lateinit var types: List<Type>
         try {
             types = service.getTypes()
-            Log.d(TAG, "Received types: $types")
         } catch (e: Exception) {
-            Log.e(TAG, "Error fetching types", e)
+            Log.e(TAG, "Ошибка загрузки типов", e)
         }
         return types
     }
@@ -23,9 +22,8 @@ class TypeServiceImpl: TypeService {
         lateinit var type: Type
         try {
             type = service.getTypeById(id)
-            Log.d(TAG, "Received type: $type")
         } catch (e: Exception) {
-            Log.e(TAG, "Error fetching type", e)
+            Log.e(TAG, "Ошибка загрузки типа", e)
         }
         return type
     }
@@ -34,9 +32,8 @@ class TypeServiceImpl: TypeService {
         lateinit var type: Type
         try {
             type = service.createType(_type)
-            Log.d(TAG, "Created type: $type")
         } catch (e: Exception) {
-            Log.e(TAG, "Error creating type", e)
+            Log.e(TAG, "Ошибка создания типа", e)
         }
         return type
     }
@@ -45,9 +42,8 @@ class TypeServiceImpl: TypeService {
         lateinit var type: Type
         try {
             type = service.updateType(id,_type)
-            Log.d(TAG, "Updated type: $type")
         } catch (e: Exception) {
-            Log.e(TAG, "Error updating type", e)
+            Log.e(TAG, "Ошибка обновления типа", e)
         }
         return type
     }
@@ -55,9 +51,8 @@ class TypeServiceImpl: TypeService {
     override suspend fun deleteType(id: Int) {
         try {
             service.deleteType(id)
-            Log.d(TAG, "Deleted type with: $id")
         } catch (e: Exception) {
-            //Log.e(TAG, "Error deleting type", e)
+            null
         }
     }
 }

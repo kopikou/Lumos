@@ -54,6 +54,6 @@ class ManagementManagerViewModelFactory(
                 showRateRepository
             ) as T
         }
-        throw IllegalArgumentException("Unknown ViewModel class")
+        throw IllegalArgumentException("Неизвестная модель")
     }
 }

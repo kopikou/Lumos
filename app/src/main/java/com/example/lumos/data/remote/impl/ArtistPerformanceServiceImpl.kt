@@ -13,9 +13,8 @@ class ArtistPerformanceServiceImpl: ArtistPerformanceService {
         lateinit var artistPerformances: List<ArtistPerformance>
         try {
             artistPerformances = service.getArtistPerformances()
-            Log.d(TAG, "Received artistPerformances: $artistPerformances")
         } catch (e: Exception) {
-            Log.e(TAG, "Error fetching artistPerformances", e)
+            Log.e(TAG, "Ошибка загрузки артистов и номеров", e)
         }
         return artistPerformances
     }
@@ -24,9 +23,8 @@ class ArtistPerformanceServiceImpl: ArtistPerformanceService {
         lateinit var artistPerformance: ArtistPerformance
         try {
             artistPerformance = service.getArtistPerformanceById(id)
-            Log.d(TAG, "Received artistPerformance: $artistPerformance")
         } catch (e: Exception) {
-            Log.e(TAG, "Error fetching artistPerformance", e)
+            Log.e(TAG, "Ошибка загрузки артиста и номера", e)
         }
         return artistPerformance
     }
@@ -35,9 +33,8 @@ class ArtistPerformanceServiceImpl: ArtistPerformanceService {
         lateinit var artistPerformance: ArtistPerformanceCreateUpdateDto
         try {
             artistPerformance = service.createArtistPerformance(_artistPerformance)
-            Log.d(TAG, "Created artistPerformance: $artistPerformance")
         } catch (e: Exception) {
-            Log.e(TAG, "Error creating artistPerformance", e)
+            Log.e(TAG, "Ошибка создания артиста и номера", e)
         }
         return artistPerformance
     }
@@ -49,9 +46,8 @@ class ArtistPerformanceServiceImpl: ArtistPerformanceService {
         lateinit var artistPerformance: ArtistPerformanceCreateUpdateDto
         try {
             artistPerformance = service.updateArtistPerformance(id,_artistPerformance)
-            Log.d(TAG, "Updated artistPerformance: $artistPerformance")
         } catch (e: Exception) {
-            Log.e(TAG, "Error updating artistPerformance", e)
+            Log.e(TAG, "Ошибка обновления артиста и номера", e)
         }
         return artistPerformance
     }
@@ -59,9 +55,8 @@ class ArtistPerformanceServiceImpl: ArtistPerformanceService {
     override suspend fun deleteArtistPerformance(id: Int) {
         try {
             service.deleteArtistPerformance(id)
-            Log.d(TAG, "Deleted artistPerformance with: $id")
         } catch (e: Exception) {
-            //Log.e(TAG, "Error deleting artistPerformance", e)
+            null
         }
     }
 }
